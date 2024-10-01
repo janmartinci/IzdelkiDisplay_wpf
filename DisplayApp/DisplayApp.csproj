@@ -1,0 +1,63 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <ApplicationIcon>Resources\icon.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="icon %281%29.png" />
+    <None Remove="icon %285%29.png" />
+    <None Remove="icon-removebg-preview.png" />
+    <None Remove="icon.png" />
+    <None Remove="icon__1_-removebg-preview.png" />
+    <None Remove="icon__2_-removebg-preview.png" />
+    <None Remove="icon__3_-removebg-preview.png" />
+    <None Remove="icon__4_-removebg-preview.png" />
+    <None Remove="icon__6_-removebg-preview.png" />
+    <None Remove="Izdelek brez naslova.png" />
+    <None Remove="Resources\gifs_dodajanje.gif" />
+    <None Remove="Resources\gifs_pos_izbris.gif" />
+    <None Remove="Resources\gifs_vse_izbris.gif" />
+    <None Remove="Resources\icon.ico" />
+    <None Remove="Resources\techtrade_Logo.png" />
+    <None Remove="Resources\techtrade_ozadje.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\gifs_dodajanje.gif" />
+    <Resource Include="Resources\gifs_pos_izbris.gif" />
+    <Resource Include="Resources\gifs_vse_izbris.gif" />
+    <Content Include="Resources\icon.ico" />
+    <Resource Include="Resources\techtrade_Logo.png" />
+    <Resource Include="Resources\techtrade_ozadje.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MaterialDesignColors" Version="3.1.0" />
+    <PackageReference Include="MaterialDesignThemes" Version="5.1.0" />
+    <PackageReference Include="MaterialDesignThemes.MahApps" Version="3.1.0" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.7" />
+    <PackageReference Include="XamlAnimatedGif" Version="2.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,574 @@
+﻿<Page x:Class="DisplayApp.NastavitvePage"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:gif="https://github.com/XamlAnimatedGif/XamlAnimatedGif"
+        xmlns:local="clr-namespace:DisplayApp"
+        mc:Ignorable="d"
+        Title="NastavitvePage" Height="500" Width="1000" Background="#FF3A3A3A">
+    <Page.Resources>
+        <Style x:Key="_ListBoxItemStyle" TargetType="ListBoxItem">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border Name="_Border"
+                        Padding="2"
+                        SnapsToDevicePixels="true">
+                            <ContentPresenter />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsSelected" Value="true">
+                                <Setter TargetName="_Border" Property="Background" Value="#FF31E4BF"/>
+                                <Setter Property="Background" Value="Gray"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="ScrollThumbs" TargetType="{x:Type Thumb}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Grid x:Name="Grid">
+                            <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto" 
+                               Height="Auto" Fill="Transparent"/>
+                            <Border x:Name="Rectangle1" CornerRadius="0 0 0 0" HorizontalAlignment="Stretch" 
+                            VerticalAlignment="Stretch" Width="Auto" Height="Auto" 
+                            Background="{TemplateBinding Background}"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="Tag" Value="Horizontal">
+                                <Setter TargetName="Rectangle1" Property="Width" Value="Auto"/>
+                                <Setter TargetName="Rectangle1" Property="Height" Value="7"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="{x:Type ScrollBar}" TargetType="{x:Type ScrollBar}">
+            <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
+            <Setter Property="Foreground" Value="#0bdac2"/>
+            <Setter Property="Background" Value="DarkGray"/>
+            <Setter Property="Width" Value="10"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ScrollBar}">
+                        <Grid x:Name="GridRoot" Width="12" Background="{x:Null}">
+                            <Track x:Name="PART_Track" Grid.Row="0" IsDirectionReversed="true" Focusable="False">
+                                <Track.Thumb>
+                                    <Thumb x:Name="Thumb" Background="{TemplateBinding Foreground}" 
+                                   Style="{DynamicResource ScrollThumbs}"/>
+                                </Track.Thumb>
+                                <Track.IncreaseRepeatButton>
+                                    <RepeatButton x:Name="PageUp" Command="ScrollBar.PageDownCommand" Opacity="0" Focusable="False"/>
+                                </Track.IncreaseRepeatButton>
+                                <Track.DecreaseRepeatButton>
+                                    <RepeatButton x:Name="PageDown" Command="ScrollBar.PageUpCommand" Opacity="0" Focusable="False"/>
+                                </Track.DecreaseRepeatButton>
+                            </Track>
+                        </Grid>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger SourceName="Thumb" Property="IsMouseOver" Value="true">
+                                <Setter Value="#068a7a" 
+                                TargetName="Thumb" Property="Background"/>
+                            </Trigger>
+                            <Trigger SourceName="Thumb" Property="IsDragging" Value="true">
+                                <Setter Value="#068a7a" TargetName="Thumb" Property="Background"/>
+                            </Trigger>
+
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter TargetName="Thumb" Property="Visibility" Value="Collapsed"/>
+                            </Trigger>
+                            <Trigger Property="Orientation" Value="Horizontal">
+                                <Setter TargetName="GridRoot" Property="LayoutTransform">
+                                    <Setter.Value>
+                                        <RotateTransform Angle="-90"/>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="PART_Track" Property="LayoutTransform">
+                                    <Setter.Value>
+                                        <RotateTransform Angle="-90"/>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="Width" Value="Auto"/>
+                                <Setter Property="Height" Value="12"/>
+                                <Setter TargetName="Thumb" Property="Tag" Value="Horizontal"/>
+                                <Setter TargetName="PageDown" Property="Command" Value="ScrollBar.PageLeftCommand"/>
+                                <Setter TargetName="PageUp" Property="Command" Value="ScrollBar.PageRightCommand"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="6*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" VerticalAlignment="Center" Margin="5">
+            <Grid x:Name="NotificationPop" Panel.ZIndex="1" Background="#FF3A3A3A" Visibility="Collapsed">
+                <WrapPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <materialDesign:PackIcon x:Name="PackIconNotification" Kind="ImageRemove" Width="25" Height="25" Foreground="White" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="NotificationPopText" Text="" Foreground="White" FontSize="17" Margin="5" FontWeight="SemiBold"></TextBlock>
+                </WrapPanel>
+            </Grid>
+            <Grid HorizontalAlignment="Left" Margin="5">
+                <WrapPanel VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5">
+                    <materialDesign:PackIcon Kind="Settings" Height="23" Width="23" VerticalAlignment="Center" Foreground="#FF31E4BF" BorderBrush="{x:Null}"/>
+                    <TextBlock Margin="5 0 5 0" VerticalAlignment="Center" Foreground="White" FontSize="17" x:Name="DisplayX" >Display 1</TextBlock>
+                </WrapPanel>
+            </Grid>
+            <Grid HorizontalAlignment="Center" Margin="5" VerticalAlignment="Center">
+                <TextBlock FontSize="17" Foreground="White" FontWeight="Bold" x:Name="TitleNastavitve" >TRENUTNE PASICE</TextBlock>
+            </Grid>
+            <Grid HorizontalAlignment="Right" Margin="5">
+                <WrapPanel Margin="5 0">
+                    <Button Foreground="{x:Null}" BorderBrush="{x:Null}" x:Name="SaveButtonNastavitve" Cursor="Hand" Tag="Exit" Width="50" Height="35" Click="SaveButtonNastavitve_Click">
+                        <materialDesign:PackIcon Kind="ContentSaveAll" Foreground="White" Height="23" Width="23"/>
+                        <Button.Style>
+                            <Style TargetType="{x:Type Button}">
+                                <Setter Property="Background" Value="#FF3A3A3A"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="{x:Type Button}">
+                                            <Border Background="{TemplateBinding Background}" CornerRadius="5 0 0 5">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#FF31E4BF"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                    <Button Foreground="{x:Null}" BorderBrush="{x:Null}" Cursor="Hand" Tag="Exit" Width="50" Height="35" x:Name="closeNastavitve" Click="CloseNastavitve">
+                        <materialDesign:PackIcon Kind="CancelBold" Foreground="#FFE84C4C" Height="25" Width="25"/>
+                        <Button.Style>
+                            <Style TargetType="{x:Type Button}">
+                                <Setter Property="Background" Value="#FF3A3A3A"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="{x:Type Button}">
+                                            <Border Background="{TemplateBinding Background}" CornerRadius="0 5 5 0">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#4f4d4d"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                </WrapPanel>
+            </Grid>
+        </Grid>
+        <Grid Grid.Row="1">
+            <ListBox ItemContainerStyle="{DynamicResource _ListBoxItemStyle}" Margin="5"  BorderBrush="{x:Null}" x:Name="SlikePasice" Background="Transparent" SelectionMode="Multiple" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="False">
+
+            </ListBox>
+            <ListBox Visibility="Hidden" ItemContainerStyle="{DynamicResource _ListBoxItemStyle}" Margin="5"  BorderBrush="{x:Null}" x:Name="DodajNovePasice" Background="Transparent" SelectionMode="Multiple" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="False">
+
+            </ListBox>
+        </Grid>
+        <Grid Grid.Row="2">
+            <WrapPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Grid x:Name="DodajNovePasiceButton">
+                    <Button Foreground="{x:Null}" BorderBrush="{x:Null}" Cursor="Hand" Tag="Exit" Click="DodajPasice">
+                        <WrapPanel Margin="5" VerticalAlignment="Center">
+                            <materialDesign:PackIcon Kind="Add" Width="25" Height="25" Foreground="White" VerticalAlignment="Center"/>
+                            <TextBlock Foreground="White" FontSize="17" Text="Dodaj pasice"/>
+                        </WrapPanel>
+                        <Button.Style>
+                            <Style TargetType="{x:Type Button}">
+                                <Setter Property="Background" Value="#FF3A3A3A"/>
+                                <Setter Property="Margin" Value="5"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="{x:Type Button}">
+                                            <Border Background="{TemplateBinding Background}" CornerRadius="5">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#FF31E4BF"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                </Grid>
+                <Grid x:Name="IzbrišiVsePasiceButton">
+                    <Menu x:Name="DropDownButton" Foreground="{x:Null}" BorderBrush="{x:Null}" Cursor="Hand" Tag="Exit">
+                        <MenuItem>
+                            <MenuItem.Header>
+                                <StackPanel Orientation="Horizontal">
+                                    <materialDesign:PackIcon Kind="Delete" Width="25" Height="25" Foreground="White"/>
+                                    <TextBlock Text="Izbriši" Foreground="White"/>
+                                </StackPanel>
+                            </MenuItem.Header>
+                            <MenuItem Header="Izbrane" Margin="0 0 0 5" Click="IzbrisiIzbrano" Style="{DynamicResource CustomPopUP}"/>
+                            <MenuItem Header="Vse" Click="IzbrisiVse" Style="{DynamicResource CustomPopUP}"/>
+                        </MenuItem>
+                        <Menu.Resources>
+                            <Style x:Key="CustomPopUP" TargetType="MenuItem">
+                                <Setter Property="Background" Value="#FFF33A3A"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="MenuItem">
+                                            <Border Background="{TemplateBinding Background}" 
+                                            CornerRadius="5" 
+                                            BorderThickness="0">
+                                                <Grid>
+                                                    <ContentPresenter ContentSource="Header" 
+                                                              HorizontalAlignment="Center"
+                                                              Margin="7"
+                                                              VerticalAlignment="Center"/>
+                                                    <Popup IsOpen="{TemplateBinding IsSubmenuOpen}" Placement="Right" AllowsTransparency="True" PopupAnimation="Fade">
+                                                        <Border Background="Transparent" CornerRadius="5">
+                                                            <StackPanel Margin="5 0 0 0">
+                                                                <ItemsPresenter/>
+                                                            </StackPanel>
+                                                        </Border>
+                                                    </Popup>
+                                                </Grid>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#FF31E4BF"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                            <Style TargetType="Menu">
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                                <Setter Property="VerticalAlignment" Value="Center" />
+                                <Setter Property="FontSize" Value="17"/>
+                                <Setter Property="Margin" Value="5"/>
+                            </Style>
+                            <Style TargetType="{x:Type MenuItem}">
+                                <Setter Property="Background" Value="#FF3A3A3A"/>
+                                <Setter Property="Foreground" Value="White"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="MenuItem">
+                                            <Border Background="{TemplateBinding Background}" 
+                                            CornerRadius="5" 
+                                            BorderThickness="0">
+                                                <Grid>
+                                                    <ContentPresenter ContentSource="Header" 
+                                                              HorizontalAlignment="Center"
+                                                              Margin="7"
+                                                              VerticalAlignment="Center"/>
+                                                    <Popup IsOpen="{TemplateBinding IsSubmenuOpen}" Placement="Right" AllowsTransparency="True" PopupAnimation="Fade">
+                                                        <Border Background="Transparent" CornerRadius="5">
+                                                            <StackPanel Margin="5 0 0 0">
+                                                                <ItemsPresenter/>
+                                                            </StackPanel>
+                                                        </Border>
+                                                    </Popup>
+                                                </Grid>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#FF31E4BF"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Menu.Resources>
+                    </Menu>
+                </Grid>
+                <Grid x:Name="ShraniNovePasiceButton" Visibility="Collapsed">
+                    <Button Foreground="{x:Null}" BorderBrush="{x:Null}" Cursor="Hand" Tag="Exit" Click="Shrani_Nove_Pasice_Click">
+                        <WrapPanel Margin="5" VerticalAlignment="Center">
+                            <materialDesign:PackIcon Kind="ContentSave" Width="30" Height="30" Foreground="White" VerticalAlignment="Center"/>
+                            <TextBlock Foreground="White" VerticalAlignment="Center" FontSize="15" Padding="5" FontWeight="Bold">Dodaj</TextBlock>
+                        </WrapPanel>
+                        <Button.Style>
+                            <Style TargetType="{x:Type Button}">
+                                <Setter Property="Background" Value="#FF3A3A3A"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="{x:Type Button}">
+                                            <Border Background="{TemplateBinding Background}" CornerRadius="5">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#FF31E4BF"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                </Grid>
+                <Grid x:Name="NazajNaTrenutne" Visibility="Collapsed">
+                    <Button Foreground="{x:Null}" BorderBrush="{x:Null}" Cursor="Hand" Tag="Exit" Click="NazajNaTrenutne_Click">
+                        <WrapPanel Margin="5" VerticalAlignment="Center">
+                            <materialDesign:PackIcon Kind="Cancel" Width="30" Height="30" Foreground="White" VerticalAlignment="Center"/>
+                            <TextBlock Foreground="White" VerticalAlignment="Center" FontSize="15" Padding="5" FontWeight="Bold">Nazaj</TextBlock>
+                        </WrapPanel>
+                        <Button.Style>
+                            <Style TargetType="{x:Type Button}">
+                                <Setter Property="Background" Value="#FF3A3A3A"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="{x:Type Button}">
+                                            <Border Background="{TemplateBinding Background}" CornerRadius="5">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#FFF33A3A"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                </Grid>
+            </WrapPanel>
+        </Grid>
+        <Grid Grid.Row="1" x:Name="Vodic" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Visible">
+            <Border Background="Gray" BorderBrush="gray" Padding="10" CornerRadius="0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0">
+                        <WrapPanel>
+                            <materialDesign:PackIcon Foreground="Aqua" Kind="QuestionAnswer" Width="20" Height="20" VerticalAlignment="Center"/>
+                            <TextBlock FontSize="17" Padding="5 0 0 0" FontWeight="Bold" Foreground="Aqua" VerticalAlignment="Center" Text="Vodič"/>
+                        </WrapPanel>
+                    </Grid>
+                    <Grid Grid.Row="1" Margin="5" Width="400">
+                        <StackPanel x:Name="VodicStackPanel">
+                            <TextBlock Foreground="White" Margin="0 0 0 5 " FontSize="14" FontWeight="Bold" TextWrapping="Wrap" Text="Nastavitve pasic" />
+                            <TextBlock Foreground="White" Margin="5 0 0 5 " FontWeight="SemiBold" FontSize="14" TextWrapping="Wrap" Text="Nastavitve so namenjene pregledu in urejanju pasic (brisanje in dodajanje novih)." />
+                            <TextBlock Foreground="White" Margin="5 0 0 5 " FontWeight="SemiBold" FontSize="14" TextWrapping="Wrap" Text="Namesto da ustvarjaš nova promocijska okna ob vsaki zamenjavi pasic, lahko to preprosto storiš prek nastavitev." />
+                            <Button x:Name="VodicButtonNext" Foreground="{x:Null}" BorderBrush="{x:Null}" Cursor="Hand" Tag="Exit" Margin="0 10 0 0" Click="VodicButtonNext_Click">
+                                <Border Padding="5">
+                                    <materialDesign:PackIcon Kind="ForwardOutline" Foreground="White" Width="25" Height="25"/>
+                                </Border>
+                                <Button.Style>
+                                    <Style TargetType="{x:Type Button}">
+                                        <Setter Property="Background" Value="#FF3A3A3A"/>
+                                        <Setter Property="Margin" Value="5"/>
+                                        <Setter Property="Padding" Value="5"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="{x:Type Button}">
+                                                    <Border Background="{TemplateBinding Background}" CornerRadius="3">
+                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Background" Value="LightSlateGray"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </Border>
+        </Grid>
+        <Grid Grid.Row="0" Margin="0 15 0 0" Grid.RowSpan="3" x:Name="Vodic2" HorizontalAlignment="Center" VerticalAlignment="Top" Width="500" Visibility="Collapsed">
+            <Border Background="Gray" BorderBrush="gray" Padding="10" CornerRadius="0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="8*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0">
+                        <WrapPanel>
+                            <materialDesign:PackIcon Foreground="Aqua" Kind="QuestionAnswer" Width="20" Height="20" VerticalAlignment="Center"/>
+                            <TextBlock FontSize="17" Padding="5 0 0 0" FontWeight="Bold" Foreground="Aqua" VerticalAlignment="Center" Text="Vodič"/>
+                        </WrapPanel>
+                    </Grid>
+                    <ScrollViewer x:Name="ScrollViewerVodic2" Grid.Row="1" ScrollChanged="ScrollViewerVodic2_ScrollChanged">
+                        <Grid Margin="5">
+                            <StackPanel>
+                                <TextBlock Foreground="White" Margin="0 0 0 5 " FontSize="14" FontWeight="Bold" TextWrapping="Wrap" Text="Brisanje pasic" />
+                                <TextBlock Foreground="White" Margin="5 0 0 5 " FontWeight="SemiBold" FontSize="14" TextWrapping="Wrap" Text="Pasice, ki jih trenutno vidiš v ozadju, so tiste, ki jih promocijsko okno že vsebuje (izbrane ob ustvarjanju promocijskega okna)." />
+                                <TextBlock Foreground="Yellow" Margin="0 0 0 5 " FontWeight="SemiBold" FontSize="14" TextWrapping="Wrap" Text="Ko pritisneš na 'Izbriši', se pojavita dve možnosti:"/>
+                                <TextBlock Foreground="White" Margin="0 0 0 5 " FontWeight="SemiBold" FontSize="14" TextWrapping="Wrap" Text="Prva možnost je brisanje izbranih pasic:"/>
+                                <Grid>
+                                    <Image x:Name="gifPosIzbris" gif:AnimationBehavior.AutoStart="False" gif:AnimationBehavior.SourceUri="/Resources/gifs_pos_izbris.gif" Stretch="Uniform"/>
+                                </Grid>
+                                <TextBlock Foreground="White" Margin="0 10 0 5 " FontWeight="SemiBold" FontSize="14" TextWrapping="Wrap" Text="Druga možnost pa omogoča brisanje vseh pasic na enkrat."/>
+                                <Grid>
+                                    <Image x:Name="gifVseIzbris" gif:AnimationBehavior.AutoStart="False" gif:AnimationBehavior.SourceUri="/Resources/gifs_vse_izbris.gif" Stretch="Uniform"/>
+                                </Grid>
+                            </StackPanel>
+                        </Grid>
+                    </ScrollViewer>
+                    <Grid Grid.Row="2">
+                        <Button Foreground="{x:Null}" BorderBrush="{x:Null}" Cursor="Hand" Tag="Exit" Margin="0 10 0 0" Click="Vodic2_Birsanje_Click">
+                            <Border Padding="5">
+                                <materialDesign:PackIcon Kind="ForwardOutline" Foreground="White" Width="25" Height="25"/>
+                            </Border>
+                            <Button.Style>
+                                <Style TargetType="{x:Type Button}">
+                                    <Setter Property="Background" Value="#FF3A3A3A"/>
+                                    <Setter Property="Margin" Value="5"/>
+                                    <Setter Property="Padding" Value="5"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type Button}">
+                                                <Border Background="{TemplateBinding Background}" CornerRadius="3">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="LightSlateGray"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                    </Grid>
+                </Grid>
+            </Border>
+        </Grid>
+        <Grid Grid.Row="0" Grid.RowSpan="3" x:Name="Vodic3" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed">
+            <Border Background="Gray" BorderBrush="gray" Padding="10" CornerRadius="0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="6*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0">
+                        <WrapPanel>
+                            <materialDesign:PackIcon Foreground="Aqua" Kind="QuestionAnswer" Width="20" Height="20" VerticalAlignment="Center"/>
+                            <TextBlock FontSize="17" Padding="5 0 0 0" FontWeight="Bold" Foreground="Aqua" VerticalAlignment="Center" Text="Vodič"/>
+                        </WrapPanel>
+                    </Grid>
+                    <Grid Grid.Row="1" Margin="5" Width="600">
+                        <StackPanel>
+                            <TextBlock Foreground="White" Margin="0 0 0 5 " FontSize="14" FontWeight="Bold" TextWrapping="Wrap" Text="Dodajanje novih pasic:" />
+                            <Grid>
+                                <Image x:Name="gifDodajanje" gif:AnimationBehavior.AutoStart="False" gif:AnimationBehavior.SourceUri="/Resources/gifs_dodajanje.gif" Stretch="Uniform"/>
+                            </Grid>
+                        </StackPanel>
+                    </Grid>
+                    <Grid Grid.Row="2">
+                        <Button Foreground="{x:Null}" BorderBrush="{x:Null}" Cursor="Hand" Tag="Exit" Margin="0 10 0 0" Click="Vodic3_Dodajanje_Click">
+                            <Border Padding="5">
+                                <materialDesign:PackIcon Kind="ForwardOutline" Foreground="White" Width="25" Height="25"/>
+                            </Border>
+                            <Button.Style>
+                                <Style TargetType="{x:Type Button}">
+                                    <Setter Property="Background" Value="#FF3A3A3A"/>
+                                    <Setter Property="Margin" Value="5"/>
+                                    <Setter Property="Padding" Value="5"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type Button}">
+                                                <Border Background="{TemplateBinding Background}" CornerRadius="3">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="LightSlateGray"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                    </Grid>
+                </Grid>
+            </Border>
+        </Grid>
+        <Grid Grid.Row="1" x:Name="Vodic4" HorizontalAlignment="Center" VerticalAlignment="Bottom" Visibility="Collapsed">
+            <Border Background="Gray" BorderBrush="gray" Padding="10" CornerRadius="0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0">
+                        <WrapPanel>
+                            <materialDesign:PackIcon Foreground="Aqua" Kind="QuestionAnswer" Width="20" Height="20" VerticalAlignment="Center"/>
+                            <TextBlock FontSize="17" Padding="5 0 0 0" FontWeight="Bold" Foreground="Aqua" VerticalAlignment="Center" Text="Vodič"/>
+                        </WrapPanel>
+                    </Grid>
+                    <Grid Grid.Row="1" Margin="5" Width="600">
+                        <StackPanel>
+                            <TextBlock Foreground="White" Margin="0 0 0 5 " FontSize="14" FontWeight="Bold" TextWrapping="Wrap" Text="Preizkusi delovanje – dodaj ali izbriši katero od pasic." />
+                            <TextBlock Foreground="Yellow" Margin="0 0 0 5 " FontSize="14" FontWeight="Bold" TextWrapping="Wrap" Text="Ne pozabi – ko zaključiš urejanje, je potrebno spremembe shraniti! Desno zgoraj se nahaja gumb z ikono za shranjevanje." />
+                            <Button Foreground="{x:Null}" BorderBrush="{x:Null}" Cursor="Hand" Tag="Exit" Margin="0 10 0 0" Click="Vodic4_Click">
+                                <Border Padding="5">
+                                    <materialDesign:PackIcon Kind="ForwardOutline" Foreground="White" Width="25" Height="25"/>
+                                </Border>
+                                <Button.Style>
+                                    <Style TargetType="{x:Type Button}">
+                                        <Setter Property="Background" Value="#FF3A3A3A"/>
+                                        <Setter Property="Margin" Value="5"/>
+                                        <Setter Property="Padding" Value="5"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="{x:Type Button}">
+                                                    <Border Background="{TemplateBinding Background}" CornerRadius="3">
+                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Background" Value="LightSlateGray"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</Page>

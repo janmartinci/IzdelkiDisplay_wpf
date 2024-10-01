@@ -1,0 +1,89 @@
+﻿<Window x:Class="DisplayApp.IzdelkiDisplay"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        mc:Ignorable="d"
+        Title="Promocijsko okno" Height="auto" Width="auto" Background="#FFECECEC"
+        SizeChanged="Window_SizeChanged" WindowStartupLocation="CenterScreen" WindowStyle="None" ResizeMode="NoResize" MouseLeftButtonDown="Window_MouseLeftButtonDown" KeyDown="Window_KeyDown" Closing="Window_Closing" MouseDoubleClick="Window_MouseDoubleClick" Loaded="Window_Loaded">
+    <Window.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="FontSize" Value="15"></Setter>
+        </Style>
+    </Window.Resources>
+    <Grid Name="MainGrid">
+        <Grid.LayoutTransform>
+            <ScaleTransform x:Name="MainScaleTransform"/>
+        </Grid.LayoutTransform>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="9*"/>
+            <RowDefinition Height="13*"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Image Source="https://www.techtrade.si/images/thumbs/0q058605.png"  x:Name="XmalPasica" Stretch="Fill"></Image>
+        </Grid>
+        <Grid Grid.Row="1" Margin="5" x:Name="mainContainer">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+        </Grid>
+        <Grid Grid.Row="1" x:Name="Vodic" HorizontalAlignment="Center" VerticalAlignment="Center" Width="400">
+            <Border Background="Gray" BorderBrush="gray" Padding="10" CornerRadius="0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0">
+                        <WrapPanel>
+                            <materialDesign:PackIcon Foreground="Aqua" Kind="QuestionAnswer" Width="20" Height="20" VerticalAlignment="Center"/>
+                            <TextBlock FontSize="17" Padding="5 0 0 0" FontWeight="Bold" Foreground="Aqua" VerticalAlignment="Center" Text="Vodič"/>
+                        </WrapPanel>
+                    </Grid>
+                    <Grid Grid.Row="1" Margin="5">
+                        <StackPanel x:Name="VodicStackPanel">
+                            <TextBlock Margin="0 0 0 0"  Foreground="Yellow" FontWeight="Bold" FontSize="14" TextWrapping="Wrap" Text="Kontrole promocijskega okna" />
+                            <TextBlock Margin="5 5 0 0"  Foreground="White" FontWeight="SemiBold" FontSize="14" TextWrapping="Wrap" Text="F11 - Način celotnega zaslona / Iz celotnega zaslona" />
+                            <WrapPanel VerticalAlignment="Center" Margin="5 5 0 0">
+                                <materialDesign:PackIcon Kind="MouseLeftClick" Foreground="White" VerticalAlignment="Center"/>
+                                <TextBlock VerticalAlignment="Center"  Foreground="White" FontWeight="SemiBold" FontSize="14" TextWrapping="Wrap" Text=" - Način celotnega zaslona / Iz celotnega zaslona" />
+                            </WrapPanel>
+                            <TextBlock Margin="5 5 0 0"  Foreground="White" FontWeight="SemiBold" FontSize="14" TextWrapping="Wrap" Text="ESC - Zapre promocijsko okno" />
+                            <Button Foreground="{x:Null}" BorderBrush="{x:Null}" Cursor="Hand" Tag="Exit" Margin="0 10 0 0" Click="VodicZakljuci_Click">
+                                <Border Padding="5">
+                                    <materialDesign:PackIcon Kind="ThumbsUp" Foreground="Aqua" Width="25" Height="25"/>
+                                </Border>
+                                <Button.Style>
+                                    <Style TargetType="{x:Type Button}">
+                                        <Setter Property="Background" Value="#FF3A3A3A"/>
+                                        <Setter Property="Margin" Value="5"/>
+                                        <Setter Property="Padding" Value="5"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="{x:Type Button}">
+                                                    <Border Background="{TemplateBinding Background}" CornerRadius="3">
+                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Background" Value="LightSlateGray"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>

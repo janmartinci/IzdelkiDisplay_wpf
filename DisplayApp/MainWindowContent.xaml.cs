@@ -54,44 +54,40 @@ namespace DisplayApp
         
         private void FileCheckPasice()
         {
-            if (File.Exists("PasicePot.json"))
+            if (Directory.Exists(Properties.Settings.Default.FolderPath)){
+                PasiceFolderSelector.Visibility = Visibility.Collapsed;
+                NaloziAsyncFunkcije();
+                AllDisplays.Children.Clear();
+                JsonDataLoad();
+
+                //Spodnja koda preveri če ima datoteka slike
+                //string[] tipImage = new[] { ".jpg", ".png" };
+                //var imageFiles = Directory.EnumerateFiles(path).Where(file => tipImage.Contains(System.IO.Path.GetExtension(file).ToLower())).ToList();
+
+                //if (imageFiles.Any())
+                //{
+                //    PasiceFolderSelector.Visibility = Visibility.Collapsed;
+                //    NaloziAsyncFunkcije();
+                //    AllDisplays.Children.Clear();
+                //    JsonDataLoad();
+                //}
+                //else
+                //{
+                //    MessageBox.Show("Izbrana datoteka za pasice ne vsebuje nobenih slik. Dodaj slike ali pa izberi novo datoteko");
+
+                //    if (PasiceFolderSelector.Visibility != Visibility.Visible)
+                //    {
+                //        PasiceFolderSelector.Visibility = Visibility.Visible;
+                //    }
+                //}
+            }
+            else
             {
-                var path = File.ReadAllText("PasicePot.json");
-                if (Directory.Exists(path)){
-                    PasiceFolderSelector.Visibility = Visibility.Collapsed;
-                    NaloziAsyncFunkcije();
-                    AllDisplays.Children.Clear();
-                    JsonDataLoad();
+                MessageBox.Show($"Datoteka {Properties.Settings.Default.FolderPath} ne obstaja več ali pa je prišlo do spremebe imena. Ponovno izberi datoteko za pasice!");
 
-                    //Spodnja koda preveri če ima datoteka slike
-                    //string[] tipImage = new[] { ".jpg", ".png" };
-                    //var imageFiles = Directory.EnumerateFiles(path).Where(file => tipImage.Contains(System.IO.Path.GetExtension(file).ToLower())).ToList();
-
-                    //if (imageFiles.Any())
-                    //{
-                    //    PasiceFolderSelector.Visibility = Visibility.Collapsed;
-                    //    NaloziAsyncFunkcije();
-                    //    AllDisplays.Children.Clear();
-                    //    JsonDataLoad();
-                    //}
-                    //else
-                    //{
-                    //    MessageBox.Show("Izbrana datoteka za pasice ne vsebuje nobenih slik. Dodaj slike ali pa izberi novo datoteko");
-
-                    //    if (PasiceFolderSelector.Visibility != Visibility.Visible)
-                    //    {
-                    //        PasiceFolderSelector.Visibility = Visibility.Visible;
-                    //    }
-                    //}
-                }
-                else
+                if (PasiceFolderSelector.Visibility != Visibility.Visible)
                 {
-                    MessageBox.Show($"Datoteka {path} ne obstaja več ali pa je prišlo do spremebe imena. Ponovno izberi datoteko za pasice!");
-
-                    if (PasiceFolderSelector.Visibility != Visibility.Visible)
-                    {
-                        PasiceFolderSelector.Visibility = Visibility.Visible;
-                    }
+                    PasiceFolderSelector.Visibility = Visibility.Visible;
                 }
             }
         }
@@ -346,7 +342,7 @@ namespace DisplayApp
         {
             if(pasiceFromFile.Count() > 0)
             {
-                var path = File.ReadAllText("PasicePot.json");
+                var path = Properties.Settings.Default.FolderPath;
                 if (Directory.Exists(path))
                 {
                     izdelkiDisplay = new IzdelkiDisplay(znamkePassWindow, pasiceFromFile, XmlLoadData, DisplayXName);
@@ -363,7 +359,7 @@ namespace DisplayApp
         private void NastavitvePageOpen(object sender, RoutedEventArgs e, string fileName, string VrstaZnamke, List<string> Pasice, List<XElement> XmlLoadData, string DisplayXName)
         {
 
-            var path = File.ReadAllText("PasicePot.json");
+            var path = Properties.Settings.Default.FolderPath;
             if (Directory.Exists(path))
             {
                 NastavitvePage nastavitvePage = new NastavitvePage(fileName, VrstaZnamke, Pasice, XmlLoadData, DisplayXName, pasiceFromFolder);

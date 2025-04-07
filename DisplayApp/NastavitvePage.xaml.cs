@@ -94,7 +94,7 @@ namespace DisplayApp
         {
             try
             {
-                var pot = File.ReadAllText("PasicePot.json");
+                var pot = Properties.Settings.Default.FolderPath;
 
                 DodajNovePasice.Items.Clear();
                 List<string> VseSlikeFolder = new List<string>();

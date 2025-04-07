@@ -262,6 +262,28 @@
                                     </Style>
                                 </Button.Style>
                             </Button>
+                            <Button Foreground="{x:Null}" BorderBrush="{x:Null}" Cursor="Hand" x:Name="appNastavitve" Click="appNastavitveOpen" Width="40" Height="40">
+                                <materialDesign:PackIcon Kind="SettingsApplications" Foreground="LightGray"/>
+                                <Button.Style>
+                                    <Style TargetType="{x:Type Button}">
+                                        <Setter Property="Background" Value="#FF3A3A3A"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="{x:Type Button}">
+                                                    <Border Background="{TemplateBinding Background}">
+                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Background" Value="#6f6d6d"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
                             <Button Foreground="{x:Null}" BorderBrush="{x:Null}" Cursor="Hand" Tag="Exit" x:Name="exit" Click="Button_Close" Width="40" Height="40">
                                 <materialDesign:PackIcon Kind="ExitToApp" Foreground="White"/>
                                 <Button.Style>
@@ -310,32 +332,60 @@
                             <Grid Grid.Row="1" Margin="5">
                                 <StackPanel>
                                     <StackPanel x:Name="VodicStackPanel"></StackPanel>
-                                    <Button x:Name="VodicButtonNext" Foreground="{x:Null}" BorderBrush="{x:Null}" Cursor="Hand" Tag="Exit" Margin="0 20 0 0" Click="VodicStep1_Click">
-                                        <Border>
-                                            <materialDesign:PackIcon x:Name="vodicClickIcon" Foreground="Aqua" Kind="ForwardOutline"/>
-                                        </Border>
-                                        <Button.Style>
-                                            <Style TargetType="{x:Type Button}">
-                                                <Setter Property="Background" Value="#FF3A3A3A"/>
-                                                <Setter Property="Margin" Value="5"/>
-                                                <Setter Property="Padding" Value="5"/>
-                                                <Setter Property="Template">
-                                                    <Setter.Value>
-                                                        <ControlTemplate TargetType="{x:Type Button}">
-                                                            <Border Background="{TemplateBinding Background}" CornerRadius="3">
-                                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                            </Border>
-                                                        </ControlTemplate>
-                                                    </Setter.Value>
-                                                </Setter>
-                                                <Style.Triggers>
-                                                    <Trigger Property="IsMouseOver" Value="True">
-                                                        <Setter Property="Background" Value="LightSlateGray"/>
-                                                    </Trigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Button.Style>
-                                    </Button>
+                                    <WrapPanel x:Name="VodicButtonWrapPanel" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <Button x:Name="VodicButtonNext" Foreground="{x:Null}" BorderBrush="{x:Null}" Cursor="Hand" Tag="Exit" Margin="0 20 0 0" Click="VodicStep1_Click" Width="180">
+                                            <Border>
+                                                <materialDesign:PackIcon x:Name="vodicClickIcon" Foreground="Aqua" Kind="ForwardOutline"/>
+                                            </Border>
+                                            <Button.Style>
+                                                <Style TargetType="{x:Type Button}">
+                                                    <Setter Property="Background" Value="#FF3A3A3A"/>
+                                                    <Setter Property="Margin" Value="5"/>
+                                                    <Setter Property="Padding" Value="5"/>
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="{x:Type Button}">
+                                                                <Border Background="{TemplateBinding Background}" CornerRadius="3">
+                                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                </Border>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                    <Style.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter Property="Background" Value="LightSlateGray"/>
+                                                        </Trigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Button.Style>
+                                        </Button>
+                                        <Button x:Name="VodicButtonCancel" Foreground="{x:Null}" BorderBrush="{x:Null}" Cursor="Hand" Tag="Exit" Margin="3 20 0 0" Click="VodicCancelClick" Width="180">
+                                            <Border>
+                                                <materialDesign:PackIcon x:Name="vodicClickIconCancel" Foreground="Aqua" Kind="Cancel"/>
+                                            </Border>
+                                            <Button.Style>
+                                                <Style TargetType="{x:Type Button}">
+                                                    <Setter Property="Background" Value="#fc034a"/>
+                                                    <Setter Property="Margin" Value="5"/>
+                                                    <Setter Property="Padding" Value="5"/>
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="{x:Type Button}">
+                                                                <Border Background="{TemplateBinding Background}" CornerRadius="3">
+                                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                </Border>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                    <Style.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter Property="Background" Value="LightSlateGray"/>
+                                                        </Trigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Button.Style>
+                                        </Button>
+                                    </WrapPanel>
                                 </StackPanel>
                             </Grid>
                         </Grid>

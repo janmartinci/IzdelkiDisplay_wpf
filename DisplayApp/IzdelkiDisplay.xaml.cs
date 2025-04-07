@@ -7,6 +7,7 @@ using System.Windows.Threading;
 using System.Xml.Linq;
 using MaterialDesignThemes.Wpf;
 using System.ComponentModel;
+using System.IO;
 
 namespace DisplayApp
 {
@@ -50,9 +51,33 @@ namespace DisplayApp
 
         }
 
-        private void test(object sender, EventArgs e)
+        //Error Log
+        public static class Logger
         {
-            MessageBox.Show("okay");
+            private static readonly string logFilePath = "error_log.txt";
+
+            public static void LogError(string message, Exception ex = null)
+            {
+                try
+                {
+                    using (StreamWriter writer = new StreamWriter(logFilePath, true))
+                    {
+                        writer.WriteLine("----- ERROR -----");
+                        writer.WriteLine($"Time: {DateTime.Now}");
+                        writer.WriteLine($"Message: {message}");
+                        if (ex != null)
+                        {
+                            writer.WriteLine($"Exception: {ex}");
+                        }
+                        writer.WriteLine("-----------------");
+                        writer.WriteLine();
+                    }
+                }
+                catch
+                {
+                    
+                }
+            }
         }
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
@@ -103,10 +128,10 @@ namespace DisplayApp
             }
             catch(Exception ex)
             {
-                MessageBox.Show($"Error prikazovanje pasice: {ex.Message}");
+                Logger.LogError($"Error prikazovanje pasice: {ex.Message}");
             }
         }
-        
+
         //Artikle Timer
         private void TimerSet()
         {

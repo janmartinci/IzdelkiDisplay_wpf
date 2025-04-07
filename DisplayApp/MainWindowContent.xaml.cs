@@ -1,5 +1,6 @@
 ﻿using MaterialDesignThemes.Wpf;
 using Microsoft.Win32;
+using System.ComponentModel;
 using System.IO;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -31,6 +32,8 @@ namespace DisplayApp
             izdelek = FromMainWindowXmlload;
             FileCheckPasice();
             VodicStatus();
+            //Preveri ce pride do spremebe pri Properties settings
+            Properties.Settings.Default.PropertyChanged += PropertySettingsChanged;
 
 
         }
@@ -41,7 +44,7 @@ namespace DisplayApp
         }
         private async Task LoadFolderPasice()
         {
-            var pot = File.ReadAllText("PasicePot.json");
+            var pot = Properties.Settings.Default.FolderPath;
             if (Directory.Exists(pot))
             {
                 string[] slike = await Task.Run(() => Directory.GetFiles(pot).Where(file => file.ToLower().EndsWith(".jpg") || file.ToLower().EndsWith(".jpeg") ||file.ToLower().EndsWith(".png") ||file.ToLower().EndsWith(".bmp") ||file.ToLower().EndsWith(".gif") ||file.ToLower().EndsWith(".tiff")).OrderByDescending(file => File.GetCreationTime(file)).ToArray());
@@ -55,25 +58,31 @@ namespace DisplayApp
             {
                 var path = File.ReadAllText("PasicePot.json");
                 if (Directory.Exists(path)){
-                    string[] tipImage = new[] { ".jpg", ".png" };
-                    var imageFiles = Directory.EnumerateFiles(path).Where(file => tipImage.Contains(System.IO.Path.GetExtension(file).ToLower())).ToList();
+                    PasiceFolderSelector.Visibility = Visibility.Collapsed;
+                    NaloziAsyncFunkcije();
+                    AllDisplays.Children.Clear();
+                    JsonDataLoad();
 
-                    if (imageFiles.Any())
-                    {
-                        PasiceFolderSelector.Visibility = Visibility.Collapsed;
-                        NaloziAsyncFunkcije();
-                        AllDisplays.Children.Clear();
-                        JsonDataLoad();
-                    }
-                    else
-                    {
-                        MessageBox.Show("Izbrana datoteka za pasice ne vsebuje nobenih slik. Dodaj slike ali pa izberi novo datoteko");
+                    //Spodnja koda preveri če ima datoteka slike
+                    //string[] tipImage = new[] { ".jpg", ".png" };
+                    //var imageFiles = Directory.EnumerateFiles(path).Where(file => tipImage.Contains(System.IO.Path.GetExtension(file).ToLower())).ToList();
 
-                        if (PasiceFolderSelector.Visibility != Visibility.Visible)
-                        {
-                            PasiceFolderSelector.Visibility = Visibility.Visible;
-                        }
-                    }
+                    //if (imageFiles.Any())
+                    //{
+                    //    PasiceFolderSelector.Visibility = Visibility.Collapsed;
+                    //    NaloziAsyncFunkcije();
+                    //    AllDisplays.Children.Clear();
+                    //    JsonDataLoad();
+                    //}
+                    //else
+                    //{
+                    //    MessageBox.Show("Izbrana datoteka za pasice ne vsebuje nobenih slik. Dodaj slike ali pa izberi novo datoteko");
+
+                    //    if (PasiceFolderSelector.Visibility != Visibility.Visible)
+                    //    {
+                    //        PasiceFolderSelector.Visibility = Visibility.Visible;
+                    //    }
+                    //}
                 }
                 else
                 {
@@ -92,7 +101,8 @@ namespace DisplayApp
             if (folderDialog.ShowDialog() == true)
             {
                 string folderName = folderDialog.FolderName;
-                File.WriteAllText("PasicePot.json", folderName);
+                Properties.Settings.Default.FolderPath = folderName;
+                Properties.Settings.Default.Save();
                 FileCheckPasice();
             }
         }
@@ -570,6 +580,7 @@ namespace DisplayApp
                 vodic.IsEnabled = false;
 
                 VodicButtonNext.Visibility = Visibility.Collapsed;
+                VodicButtonCancel.Visibility = Visibility.Collapsed;
                 //VodicTextAbout.Visibility = Visibility.Collapsed;
                 //VodicText.Text = "Klikni na gumb za dodajanje";
                 //VodicText.Margin = new Thickness(0, 0, 0, 10);
@@ -673,6 +684,7 @@ namespace DisplayApp
             if (Properties.Settings.Default.vodicStep == 3)
             {
                 vodicClickIcon.Kind = PackIconKind.Check;
+                VodicButtonCancel.Visibility = Visibility.Collapsed;
                 TextBlock VodicText = new TextBlock
                 {
                     Name = "VodicText",
@@ -874,7 +886,33 @@ namespace DisplayApp
             Properties.Settings.Default.vodicProOkno = true;
             Properties.Settings.Default.Save();
             vodicClickIcon.Kind = PackIconKind.ForwardOutline;
+            VodicButtonCancel.Visibility = Visibility.Visible;
             VodicStatus();
+        }
+
+        private void VodicCancelClick(object sender, RoutedEventArgs e)
+        {
+            var msg = MessageBox.Show("Ali ste prepričani, da želite izklopiti vodiča?", "?", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (msg == MessageBoxResult.Yes) {
+                Properties.Settings.Default.vodicStep = 5;
+                Properties.Settings.Default.prvicRun = false;
+                Properties.Settings.Default.vodicNatavitve = false;
+                Properties.Settings.Default.Save();
+                Vodic.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void appNastavitveOpen(object sender, RoutedEventArgs e)
+        {
+            NavigationService.GetNavigationService(this).Navigate(new MainWindowSettings());
+        }
+
+        private void PropertySettingsChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "FolderPath")
+            {
+                FileCheckPasice();
+            }
         }
     }
 

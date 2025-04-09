@@ -8,6 +8,7 @@ using System.Xml.Linq;
 using MaterialDesignThemes.Wpf;
 using System.ComponentModel;
 using System.IO;
+using System.Globalization;
 
 namespace DisplayApp
 {
@@ -237,7 +238,7 @@ namespace DisplayApp
                 var ppc = InfoIzdelk.Element("PPC")?.Value;
 
                 double cenaDDV = Convert.ToDouble(ppc) + (0.22 * Convert.ToDouble(ppc));
-                var cenaDDVDecimal = Math.Round(cenaDDV, 2);
+                var cenaDDVDecimal = cenaDDV.ToString("N2", new CultureInfo("sl-SI"));
 
                 //Main stackPanel
                 StackPanel stackPanel = new StackPanel
@@ -382,7 +383,7 @@ namespace DisplayApp
                     TextWrapping = TextWrapping.Wrap,
                     HorizontalAlignment = HorizontalAlignment.Center,
                     Padding= new Thickness(5),
-                    Text = $"{cenaDDVDecimal} zDDV"
+                    Text = $"{cenaDDVDecimal} € z DDV"
                 };
 
                 cenaGrid.Children.Add(textBlockCena);

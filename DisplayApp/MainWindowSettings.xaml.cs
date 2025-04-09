@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -30,6 +31,8 @@ namespace DisplayApp
             InitializeComponent();
             FolderPathText.Text = Properties.Settings.Default.FolderPath;
         }
+
+        //Za nastavitve pasice
 
         private void CloseMainWindowSettings(object sender, RoutedEventArgs e)
         {

@@ -39,11 +39,18 @@ namespace DisplayApp
                     try {
                         var listBoxItemSlika = new ListBoxItem
                         {
-                            FontSize = 20,
+                            FontSize = 15,
                             Foreground = Brushes.White,
-                            HorizontalAlignment = HorizontalAlignment.Center,
                             Margin = new Thickness(5),
                             Background = Brushes.White,
+                            Height = 50
+                        };
+
+                        StackPanel listPasiceStackPanel = new StackPanel
+                        {
+                            VerticalAlignment = VerticalAlignment.Center,
+                            Orientation = Orientation.Horizontal,
+
                         };
 
                         var image = await LoadImageAsync(s);
@@ -51,12 +58,21 @@ namespace DisplayApp
                         Image Slikice = new Image
                         {
                             Source = image,
-                            Width = 900,
+                            Width = 200,
+                            Margin = new Thickness(5)
                         };
 
-                        listBoxItemSlika.Content = Slikice;
+                        listPasiceStackPanel.Children.Add(Slikice);
 
-                        Slikice.MouseLeftButtonDown += (sender, e) => ImageOpacity(sender, e, Slikice);
+                        TextBlock PasiceText = new TextBlock
+                        {
+                            Text = $"{System.IO.Path.GetFileName(s)}",
+                            VerticalAlignment = VerticalAlignment.Center,
+                        };
+
+                        listPasiceStackPanel.Children.Add(PasiceText);
+
+                        listBoxItemSlika.Content = listPasiceStackPanel;
 
                         Slike.Items.Add(listBoxItemSlika);
                     }
@@ -110,24 +126,24 @@ namespace DisplayApp
         {
             List<string> imageUrls = new List<string>();
 
-            foreach (var url in Slike.SelectedItems) {
-
-                ListBoxItem listBoxItem = url as ListBoxItem;
-                if (listBoxItem != null)
+            foreach (var url in Slike.SelectedItems)
+            {
+                if (url is ListBoxItem listBoxItem && listBoxItem.Content is StackPanel stack)
                 {
-                    Image imageControl = listBoxItem.Content as Image;
-                    
-                    if (imageControl.Source is BitmapImage bitmapImage && imageControl != null)
+                    if (stack.Children[0] is Image imageControl)
                     {
-                        imageUrls.Add(bitmapImage.UriSource.ToString());
+                        if (imageControl.Source is BitmapImage bitmapImage)
+                        {
+                            imageUrls.Add(bitmapImage.UriSource.ToString());
+                        }
                     }
-                    else {
-
+                    else
+                    {
                         MessageBox.Show("Image error");
                     }
                 }
             }
-            if(imageUrls.Count > 0)
+            if (imageUrls.Count > 0)
             {
                 List<SlikeClass> slikeClasses = new List<SlikeClass>();
                 foreach (var getImg in imageUrls)

@@ -23,6 +23,9 @@
                                 <Setter TargetName="_Border" Property="Background" Value="#FF31E4BF"/>
                                 <Setter Property="Background" Value="Gray"/>
                             </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="_Border" Property="Background" Value="lightgray"/>
+                            </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
@@ -179,10 +182,10 @@
             </Grid>
         </Grid>
         <Grid Grid.Row="1">
-            <ListBox ItemContainerStyle="{DynamicResource _ListBoxItemStyle}" Margin="5"  BorderBrush="{x:Null}" x:Name="SlikePasice" Background="Transparent" SelectionMode="Multiple" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="False">
-
+            <ListBox ItemContainerStyle="{DynamicResource _ListBoxItemStyle}" Margin="0" BorderBrush="{x:Null}" x:Name="SlikePasice" Background="#4d4d4d" SelectionMode="Multiple" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="False">
+                
             </ListBox>
-            <ListBox Visibility="Hidden" ItemContainerStyle="{DynamicResource _ListBoxItemStyle}" Margin="5"  BorderBrush="{x:Null}" x:Name="DodajNovePasice" Background="Transparent" SelectionMode="Multiple" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="False">
+            <ListBox Visibility="Hidden" ItemContainerStyle="{DynamicResource _ListBoxItemStyle}" Margin="0"  BorderBrush="{x:Null}" x:Name="DodajNovePasice" Background="#4d4d4d" SelectionMode="Multiple" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="False">
 
             </ListBox>
         </Grid>

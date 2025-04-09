@@ -59,33 +59,58 @@ namespace DisplayApp
             }
         }
 
-        private void TrenutnePasice(List<string> ListTrenutnePasice)
+        private async void TrenutnePasice(List<string> ListTrenutnePasice)
         {
-            SlikePasice.Items.Clear();
-            List<string> ImageUrlList = new List<string>();
-            foreach (var pas in ListTrenutnePasice)
+
+            try
             {
-                var listBoxItemSlika = new ListBoxItem
+                SlikePasice.Items.Clear();
+                List<string> ImageUrlList = new List<string>();
+                foreach (var pas in ListTrenutnePasice)
                 {
-                    FontSize = 20,
-                    Foreground = Brushes.White,
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    Margin = new Thickness(5),
-                    Background = Brushes.White,
-                };
+                    var listBoxItemSlika = new ListBoxItem
+                    {
+                        FontSize = 15,
+                        Foreground = Brushes.White,
+                        Margin = new Thickness(5),
+                        Background = Brushes.White,
+                        Height = 50
+                    };
 
-                Image Slikice = new Image
-                {
-                    Source = new BitmapImage(new Uri($"{pas}")),
-                    Width = 900,
-                };
+                    StackPanel listPasiceStackPanel = new StackPanel
+                    {
+                        VerticalAlignment = VerticalAlignment.Center,
+                        Orientation = Orientation.Horizontal,
 
+                    };
 
-                listBoxItemSlika.Content = Slikice;
+                    var image = await LoadImageAsync($"{pas}");
 
-                Slikice.MouseLeftButtonDown += (sender, e) => ImageOpacity(sender, e, Slikice);
+                    Image Slikice = new Image
+                    {
+                        Source = image,
+                        Width = 200,
+                        Margin = new Thickness(5)
+                    };
 
-                SlikePasice.Items.Add(listBoxItemSlika);
+                    listPasiceStackPanel.Children.Add(Slikice);
+
+                    TextBlock PasiceText = new TextBlock
+                    {
+                        Text = $"{System.IO.Path.GetFileName(new Uri(pas).LocalPath)}",
+                        VerticalAlignment = VerticalAlignment.Center,
+                    };
+
+                    listPasiceStackPanel.Children.Add(PasiceText);
+
+                    listBoxItemSlika.Content = listPasiceStackPanel;
+
+                    SlikePasice.Items.Add(listBoxItemSlika);
+                }
+            }
+            catch (Exception ex) {
+
+                MessageBox.Show($"Error: {ex.Message}");
             }
 
         }
@@ -113,11 +138,19 @@ namespace DisplayApp
                 {
                     var listBoxItemSlika = new ListBoxItem
                     {
-                        FontSize = 20,
+                        FontSize = 15,
                         Foreground = Brushes.White,
-                        HorizontalAlignment = HorizontalAlignment.Center,
                         Margin = new Thickness(5),
                         Background = Brushes.White,
+                        Height = 50,
+                        
+                    };
+
+                    StackPanel listPasiceStackPanel = new StackPanel
+                    {
+                        VerticalAlignment = VerticalAlignment.Center,
+                        Orientation = Orientation.Horizontal,
+
                     };
 
                     var image = await LoadImageAsync($"{pot}\\{Filterd}");
@@ -125,16 +158,29 @@ namespace DisplayApp
                     Image Slikice = new Image
                     {
                         Source = image,
-                        Width = 900,
+                        Width = 200,
+                        Margin = new Thickness(5)
                     };
 
-                    listBoxItemSlika.Content = Slikice;
+                    listPasiceStackPanel.Children.Add(Slikice);
+
+                    TextBlock PasiceText = new TextBlock
+                    {
+                        Text = $"{System.IO.Path.GetFileName(Filterd)}",
+                        VerticalAlignment = VerticalAlignment.Center,
+
+
+
+                    };
+
+                    listPasiceStackPanel.Children.Add(PasiceText);
+
+                    listBoxItemSlika.Content = listPasiceStackPanel;
+
                     if (listBoxItemSlika.IsSelected)
                     {
                         Slikice.Opacity = 0.5;
                     }
-
-                    Slikice.MouseLeftButtonDown += (sender, e) => ImageOpacity(sender, e, Slikice);
 
                     DodajNovePasice.Items.Add(listBoxItemSlika);
                 }
@@ -204,19 +250,18 @@ namespace DisplayApp
         {
             foreach (var url in DodajNovePasice.SelectedItems)
             {
-
-                ListBoxItem listBoxItem = url as ListBoxItem;
-                if (listBoxItem != null)
+                if (url is ListBoxItem listBoxItem && listBoxItem.Content is StackPanel stack)
                 {
-                    Image imageControl = listBoxItem.Content as Image;
-
-                    if (imageControl.Source is BitmapImage bitmapImage && imageControl != null)
+                    if (stack.Children[0] is Image imageControl)
                     {
-                        ListTrenutnePasiceHolder.Add(bitmapImage.UriSource.ToString());
+                        if (imageControl.Source is BitmapImage bitmapImage)
+                        {
+                            ListTrenutnePasiceHolder.Add(bitmapImage.UriSource.ToString());
+                            Notifikacija("PASICA JE BILA DODANA", "S");
+                        }
                     }
                     else
                     {
-
                         MessageBox.Show("Image error");
                     }
                 }
@@ -241,21 +286,19 @@ namespace DisplayApp
         {
             foreach (var url in SlikePasice.SelectedItems)
             {
-
-                ListBoxItem listBoxItem = url as ListBoxItem;
-                if (listBoxItem != null)
+                if (url is ListBoxItem listBoxItem && listBoxItem.Content is StackPanel stack)
                 {
-                    Image imageControl = listBoxItem.Content as Image;
-
-                    if (imageControl.Source is BitmapImage bitmapImage && imageControl != null)
+                    if (stack.Children[0] is Image imageControl)
                     {
-                        ListTrenutnePasiceHolder.Remove(bitmapImage.UriSource.ToString());
-                        Notifikacija("IZBRISANO", "S");
+                        if (imageControl.Source is BitmapImage bitmapImage)
+                        {
+                            ListTrenutnePasiceHolder.Remove(bitmapImage.UriSource.ToString());
+                            Notifikacija("IZBRISANO", "S");
+                        }
                     }
                     else
                     {
-
-                        MessageBox.Show("Image error");
+                        MessageBox.Show("Image not found");
                     }
                 }
             }
@@ -291,7 +334,7 @@ namespace DisplayApp
 
             NotificationPop.Visibility = Visibility.Visible;
 
-            Task.Delay(3000).ContinueWith(_ =>
+            Task.Delay(1000).ContinueWith(_ =>
             {
                 Dispatcher.Invoke(() =>
                 {

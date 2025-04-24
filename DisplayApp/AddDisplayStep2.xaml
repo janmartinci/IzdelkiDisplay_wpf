@@ -190,7 +190,7 @@
                     </Grid>
                     <Grid Grid.Row="1" Margin="5">
                         <StackPanel x:Name="VodicStackPanel">
-                            <TextBlock Foreground="White" Margin="0 0 0 10 " FontSize="14" FontWeight="Bold" TextWrapping="Wrap" Text="Izbira pasico:" />
+                            <TextBlock Foreground="White" Margin="0 0 0 10 " FontSize="14" FontWeight="Bold" TextWrapping="Wrap" Text="Izberi pasico:" />
                             <TextBlock Foreground="White" Margin="5 0 0 5 " FontWeight="SemiBold" FontSize="14" TextWrapping="Wrap" Text="Vsako promocijsko okno potrebuje vsaj eno pasico," />
                             <TextBlock Foreground="White" Margin="5 0 0 5 " FontWeight="SemiBold" FontSize="14" TextWrapping="Wrap" Text="Pasice izbereš tako, da klikneš z levim klikom na želeno pasico,"/>
                             <TextBlock Foreground="White" Margin="5 0 0 5 " FontWeight="SemiBold" FontSize="14" TextWrapping="Wrap" Text="Vse izbrane pasice se obarvajo,"/>

@@ -190,7 +190,7 @@ namespace DisplayApp
 
             //izbere 5 random izdelkov in shrani v array ter preveri ce je ta artikel ze v arreju
             Random random = new Random();
-            if (znamka != "Vsi")
+            if (znamka != "Vse znamke")
             {
 
                 for (int i = 0; i < 5; i++)

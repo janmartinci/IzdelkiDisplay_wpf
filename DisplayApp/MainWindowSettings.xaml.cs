@@ -50,5 +50,10 @@ namespace DisplayApp
                 FolderPathText.Text = folderName;
             }
         }
+
+        private void ColorPicker_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color?> e)
+        {
+            var selectedColor = e.NewValue;
+        }
     }
 }

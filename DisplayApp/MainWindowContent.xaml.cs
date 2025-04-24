@@ -641,6 +641,30 @@ namespace DisplayApp
                 wrapPanelVodic.Children.Add(packIconVodic);
                 wrapPanelVodic.Children.Add(textBlockVodic);
 
+                var wrapPanelSettings = new WrapPanel();
+
+                var textBlockSettings = new TextBlock
+                {
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Foreground = Brushes.White,
+                    FontWeight = FontWeights.Bold,
+                    FontSize = 14,
+                    TextWrapping = TextWrapping.Wrap,
+                    Text = "Nastavitve"
+                };
+
+                var packIconSettings = new PackIcon
+                {
+                    Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("white")),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Width = 25,
+                    Height = 25,
+                    Margin = new Thickness(0, 0, 5, 0),
+                    Kind = PackIconKind.SettingsApplications
+                };
+                wrapPanelSettings.Children.Add(packIconSettings);
+                wrapPanelSettings.Children.Add(textBlockSettings);
+
                 var wrapPanelExit = new WrapPanel();
 
                 var textBlockExit = new TextBlock
@@ -667,6 +691,7 @@ namespace DisplayApp
 
                 VodicStackPanel.Children.Add(wrapPanelAdd);
                 VodicStackPanel.Children.Add(wrapPanelVodic);
+                VodicStackPanel.Children.Add(wrapPanelSettings);
                 VodicStackPanel.Children.Add(wrapPanelExit);
                 VodicStackPanel.Children.Add(VodicText);
                 Vodic.VerticalAlignment = VerticalAlignment.Bottom;

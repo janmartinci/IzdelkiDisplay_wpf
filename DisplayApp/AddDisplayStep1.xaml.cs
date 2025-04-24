@@ -33,17 +33,31 @@ namespace DisplayApp
             pasice = Pasice;
             izdelek = XmlData;
             FileName = nameFile;
-            string[] znamkaListItem = { "Vsi", "Bachmann", "Baseus", "Datech", "Digitus", "HiLook", "KELine", "Leviton", "Mikrotik", "SBOX", "Tenda", "TP-Link", "Triton", "UBIQUITI", "White Shark" };
+            string[] znamkaListItem = { "Vse znamke", "Bachmann", "Baseus", "Datech", "Digitus", "HiLook", "KELine", "Leviton", "Mikrotik", "SBOX", "Tenda", "TP-Link", "Triton", "UBIQUITI", "White Shark" };
             foreach(var i  in znamkaListItem)
             {
-                ListBoxItem znamkaItem = new ListBoxItem()
+                if (i != "Vse znamke")
                 {
-                    FontSize = 20,
-                    Foreground = Brushes.White,
-                    Content = i
-                };
+                    ListBoxItem znamkaItem = new ListBoxItem()
+                    {
+                        FontSize = 20,
+                        Foreground = Brushes.White,
+                        Content = i
+                    };
 
-                ZnamkaListBox.Items.Add(znamkaItem);
+                    ZnamkaListBox.Items.Add(znamkaItem);
+                }
+                else
+                {
+                    ListBoxItem znamkaItem = new ListBoxItem()
+                    {
+                        FontSize = 20,
+                        Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF31E4BF")),
+                        Content = i
+                    };
+
+                    ZnamkaListBox.Items.Add(znamkaItem);
+                }
             }
 
             if (Properties.Settings.Default.vodicStep >= 3)

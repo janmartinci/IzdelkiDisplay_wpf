@@ -145,17 +145,12 @@ namespace DisplayApp
             }
             if (imageUrls.Count > 0)
             {
-                List<SlikeClass> slikeClasses = new List<SlikeClass>();
-                foreach (var getImg in imageUrls)
-                {
-                    slikeClasses.Add(new SlikeClass() { UrlSlike = getImg });
-                }
                 var znamkeList = new List<ZnamkeClass> {
 
                     new ZnamkeClass
                     {
                         VrstaZnamke = SelectedZnamka,
-                        Slike = slikeClasses
+                        Slike = imageUrls
 
                     }
                 };

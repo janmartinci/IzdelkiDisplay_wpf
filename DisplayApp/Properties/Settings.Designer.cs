@@ -106,5 +106,65 @@ namespace DisplayApp.Properties {
                 this["FolderPath"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#ffffff")]
+        public string HeaderKontrolnoOknoColor {
+            get {
+                return ((string)(this["HeaderKontrolnoOknoColor"]));
+            }
+            set {
+                this["HeaderKontrolnoOknoColor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#ffffff")]
+        public string BodyKontrolnoOKnoColor {
+            get {
+                return ((string)(this["BodyKontrolnoOKnoColor"]));
+            }
+            set {
+                this["BodyKontrolnoOKnoColor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#000000")]
+        public string TextKontrolnoOknoColor {
+            get {
+                return ((string)(this["TextKontrolnoOknoColor"]));
+            }
+            set {
+                this["TextKontrolnoOknoColor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#0bdac2")]
+        public string ButtonKortrolnoOknoOpenColor {
+            get {
+                return ((string)(this["ButtonKortrolnoOknoOpenColor"]));
+            }
+            set {
+                this["ButtonKortrolnoOknoOpenColor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#cccccc")]
+        public string ButtonKontrolnoOknoNastavitveColor {
+            get {
+                return ((string)(this["ButtonKontrolnoOknoNastavitveColor"]));
+            }
+            set {
+                this["ButtonKontrolnoOknoNastavitveColor"] = value;
+            }
+        }
     }
 }

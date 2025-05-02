@@ -162,28 +162,52 @@
                         </StackPanel>
                     </Grid>
                     <Grid Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right">
-                        <Button BorderBrush="{x:Null}" Foreground="{x:Null}" Click="CloseMainWindowSettings" Cursor="Hand">
-                            <materialDesign:PackIcon Kind="Remove" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#e32b56"/>
-                            <Button.Style>
-                                <Style TargetType="{x:Type Button}">
-                                    <Setter Property="Background" Value="Transparent"/>
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="{x:Type Button}">
-                                                <Border Background="{TemplateBinding Background}" CornerRadius="3">
-                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                </Border>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                    <Style.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="Background" Value="Transparent"/>
-                                        </Trigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Button.Style>
-                        </Button>
+                        <WrapPanel>
+                            <Button Width="45" Margin="0 0 5 0" BorderBrush="{x:Null}" Foreground="{x:Null}" Padding="0" Click="ShraniNastaviteMain" >
+                                <materialDesign:PackIcon Height="20" Width="20" Kind="ContentSave" VerticalAlignment="Center" Foreground="#FF31E4BF"/>
+                                <Button.Style>
+                                    <Style TargetType="{x:Type Button}">
+                                        <Setter Property="Background" Value="#FF3A3A3A"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="{x:Type Button}">
+                                                    <Border Background="{TemplateBinding Background}" CornerRadius="5">
+                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Background" Value="#4f4d4d"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                            <Button BorderBrush="{x:Null}" Foreground="{x:Null}" Click="CloseMainWindowSettings" Cursor="Hand">
+                                <materialDesign:PackIcon Kind="Remove" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#e32b56"/>
+                                <Button.Style>
+                                    <Style TargetType="{x:Type Button}">
+                                        <Setter Property="Background" Value="Transparent"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="{x:Type Button}">
+                                                    <Border Background="{TemplateBinding Background}" CornerRadius="3">
+                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Background" Value="Transparent"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                        </WrapPanel>
                     </Grid>
                 </Grid>
                 <Grid Grid.Row="1">
@@ -281,69 +305,72 @@
                             <materialDesign:Card Margin="4" HorizontalAlignment="Left" Background="#FF3A3A3A" UniformCornerRadius="5" Height="20">
                                 <TextBlock Text="Pisava/Ikone" Margin="5 0 5 0" Foreground="White" VerticalAlignment="Center"></TextBlock>
                             </materialDesign:Card>
-                            <xctk:ColorPicker x:Name="colorPickerNOText" Margin="4" ShowStandardColors="False" AvailableColorsHeader="Ssadasd" StandardTabHeader="Barve" RecentColorsHeader="sss" AdvancedTabHeader="Barva po izbiri" AvailableColorsSortingMode="Alphabetical" Width="50"/>
+                            <xctk:ColorPicker x:Name="colorPickerText" Margin="4" ShowStandardColors="False" AvailableColorsHeader="Ssadasd" StandardTabHeader="Barve" RecentColorsHeader="sss" AdvancedTabHeader="Barva po izbiri" SelectedColorChanged="ColorPicker_Text" AvailableColorsSortingMode="Alphabetical" Width="50"/>
                         </StackPanel>
                         <StackPanel x:Name="stackPanelDisplay" Margin="10" HorizontalAlignment="Left">
                             <!-- Title Display -->
                             <StackPanel Orientation="Horizontal">
                                 <materialDesign:Card Background="White" Width="200">
-                                    <Grid>
-                                        <TextBlock Text="Ekran X" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="15" Padding="5" FontWeight="SemiBold"/>
-                                        <Button Style="{StaticResource CustomRemoveDisplayStyle}" VerticalAlignment="Top" HorizontalAlignment="Right">
+                                    <Grid x:Name="HeaderKontrolnoOkno">
+                                        <TextBlock Foreground="{Binding TextColor}" Text="Ekran X" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="15" Padding="5" FontWeight="SemiBold"/>
+                                        <Button Background="Transparent" Style="{StaticResource CustomRemoveDisplayStyle}" VerticalAlignment="Top" HorizontalAlignment="Right">
                                             <materialDesign:PackIcon Kind="Times" Width="15" Height="15" Margin="2" FontWeight="SemiBold" Foreground="Red"/>
                                         </Button>
                                     </Grid>
                                 </materialDesign:Card>
-                                <xctk:ColorPicker x:Name="colorPickerNOTitle" Margin="4" ShowStandardColors="False" AvailableColorsHeader="Ssadasd" StandardTabHeader="Barve" RecentColorsHeader="sss" AdvancedTabHeader="Barva po izbiri" AvailableColorsSortingMode="Alphabetical" Width="50"/>
+                                <xctk:ColorPicker x:Name="colorPickerHeader" Margin="4" ShowStandardColors="False" AvailableColorsHeader="Ssadasd" StandardTabHeader="Barve" RecentColorsHeader="sss" SelectedColorChanged="ColorPicker_HeaderKontrolnoOkno" AdvancedTabHeader="Barva po izbiri" AvailableColorsSortingMode="Alphabetical" Width="50"/>
                             </StackPanel>
 
                             <!-- Informacije Display -->
                             <StackPanel Orientation="Horizontal">
                                 <materialDesign:Card Background="White" Margin="0,5" Width="200">
-                                    <StackPanel>
+                                    <StackPanel x:Name="BodyKontrolnoOKno">
                                         <WrapPanel VerticalAlignment="Center">
-                                            <TextBlock Text="Znamka" FontSize="15" Padding="5" VerticalAlignment="Center"/>
+                                            <TextBlock Foreground="{Binding TextColor}" Text="Znamka" FontSize="15" Padding="5" VerticalAlignment="Center"/>
                                         </WrapPanel>
                                         <WrapPanel VerticalAlignment="Center">
-                                            <materialDesign:PackIcon Kind="Image" Width="25" Height="25" VerticalAlignment="Center" Foreground="#FF333333"/>
-                                            <TextBlock Text="X" FontSize="15" Padding="5" VerticalAlignment="Center"/>
+                                            <materialDesign:PackIcon Kind="Image" Width="25" Height="25" VerticalAlignment="Center" Foreground="{Binding TextColor}"/>
+                                            <TextBlock Foreground="{Binding TextColor}" Text="X" FontSize="15" Padding="5" VerticalAlignment="Center"/>
                                         </WrapPanel>
                                     </StackPanel>
                                 </materialDesign:Card>
-                                <xctk:ColorPicker x:Name="colorPickerNOBody" Margin="4" ShowStandardColors="False" AvailableColorsHeader="Ssadasd" StandardTabHeader="Barve" RecentColorsHeader="sss" AdvancedTabHeader="Barva po izbiri" AvailableColorsSortingMode="Alphabetical" Width="50"/>
+                                <xctk:ColorPicker x:Name="colorPickerBody" Margin="4" ShowStandardColors="False" AvailableColorsHeader="Ssadasd" StandardTabHeader="Barve" RecentColorsHeader="sss" SelectedColorChanged="ColorPicker_BodyKontrolnoOKno" AdvancedTabHeader="Barva po izbiri" AvailableColorsSortingMode="Alphabetical" Width="50"/>
                             </StackPanel>
 
                             <!-- Button Display -->
                             <StackPanel>
                                 <materialDesign:Card Background="#0BDAC2" HorizontalAlignment="Left" Width="200">
-                                    <WrapPanel>
+                                    <WrapPanel x:Name="KontrolnoOknoButtonPanel">
                                         <!-- Open Button -->
                                         <Button Width="100" Style="{StaticResource CusttomButtonAdd}">
-                                            <Grid>
+                                            <Grid x:Name="ButtonKortrolnoOknoOpen">
                                                 <Border Width="100" Height="30" BorderBrush="Yellow" BorderThickness="2" CornerRadius="5" Opacity="0"/>
-                                                <materialDesign:PackIcon Kind="OpenInApp" Width="25" Height="25" Foreground="#333333" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                                <materialDesign:PackIcon Tag="TextKontrolnoOkno"  Kind="OpenInApp" Width="25" Height="25" Foreground="{Binding TextColor}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                             </Grid>
                                         </Button>
                                         <!-- Settings Button -->
                                         <Button Width="100" Style="{StaticResource CusttomButtonNastaviteve}">
-                                            <Grid>
+                                            <Grid x:Name="ButtonKontrolnoOknoSettings">
                                                 <Border Width="100" Height="30" BorderBrush="Yellow" BorderThickness="2" CornerRadius="5" Opacity="0"/>
-                                                <materialDesign:PackIcon Kind="Settings" Width="25" Height="25" Foreground="#333333" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                                <materialDesign:PackIcon Tag="TextKontrolnoOkno" Kind="Settings" Width="25" Height="25" Foreground="{Binding TextColor}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                             </Grid>
                                         </Button>
                                     </WrapPanel>
                                 </materialDesign:Card>
                                 <StackPanel Orientation="Horizontal" Width="200" HorizontalAlignment="Left">
                                     <Grid Width="100">
-                                        <xctk:ColorPicker x:Name="colorPickerNOButtonOpen" Margin="4" ShowStandardColors="False" AvailableColorsHeader="Ssadasd" StandardTabHeader="Barve" RecentColorsHeader="sss" AdvancedTabHeader="Barva po izbiri" AvailableColorsSortingMode="Alphabetical" Width="50"/>
+                                        <xctk:ColorPicker x:Name="colorPickerButtonOpen" Margin="4" ShowStandardColors="False" AvailableColorsHeader="Ssadasd" StandardTabHeader="Barve" RecentColorsHeader="sss" SelectedColorChanged="ColorPicker_ButtonKortrolnoOknoOpen" AdvancedTabHeader="Barva po izbiri" AvailableColorsSortingMode="Alphabetical" Width="50"/>
                                     </Grid>
                                     <Grid Width="100">
-                                        <xctk:ColorPicker x:Name="colorPickerNOButtonSettings" Margin="4" ShowStandardColors="False" AvailableColorsHeader="Ssadasd" StandardTabHeader="Barve" RecentColorsHeader="sss" AdvancedTabHeader="Barva po izbiri" AvailableColorsSortingMode="Alphabetical" Width="50"/>
+                                        <xctk:ColorPicker x:Name="colorPickerButtonSettings" Margin="4" ShowStandardColors="False" AvailableColorsHeader="Ssadasd" StandardTabHeader="Barve" RecentColorsHeader="sss" SelectedColorChanged="ColorPicker_ButtonKontrolnoOknoNastavitve" AdvancedTabHeader="Barva po izbiri" AvailableColorsSortingMode="Alphabetical" Width="50"/>
                                     </Grid>
                                 </StackPanel>
                             </StackPanel>
                         </StackPanel>
                     </StackPanel>
+                </Grid>
+                <Grid Grid.Row="2">
+                   
                 </Grid>
             </Grid>
         </materialDesign:Card>

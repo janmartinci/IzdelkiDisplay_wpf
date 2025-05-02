@@ -122,10 +122,10 @@ namespace DisplayApp
                         List<string> PasiceFromFile = new List<string>();
                         foreach (var slika in znamka.Slike)
                         {
-                            Uri uri = new Uri(slika.UrlSlike);
+                            Uri uri = new Uri(slika);
                             if (File.Exists(uri.LocalPath))
                             {
-                                PasiceFromFile.Add(slika.UrlSlike);
+                                PasiceFromFile.Add(slika);
                                 StSlik++;
                             }
 
@@ -146,7 +146,7 @@ namespace DisplayApp
 
                         };
 
-                        Grid GridCardTitle = new Grid();
+                        Grid GridCardTitle = new Grid { Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Properties.Settings.Default.HeaderKontrolnoOknoColor)) };
 
                         TextBlock textBlockTitle = new TextBlock
                         {
@@ -933,6 +933,11 @@ namespace DisplayApp
             if (e.PropertyName == "FolderPath")
             {
                 FileCheckPasice();
+            }
+            if (e.PropertyName == "HeaderKontrolnoOknoColor" || e.PropertyName == "BodyKontrolnoOKnoColor" || e.PropertyName == "TextKontrolnoOknoColor" || e.PropertyName == "ButtonKortrolnoOknoOpenColor" || e.PropertyName == "ButtonKontrolnoOknoNastavitveColor")
+            {
+                AllDisplays.Children.Clear();
+                JsonDataLoad();
             }
         }
     }

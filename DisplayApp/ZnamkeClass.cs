@@ -9,6 +9,6 @@ namespace DisplayApp
     public class ZnamkeClass
     {
         public string VrstaZnamke {  get; set; }
-        public List<SlikeClass> Slike { get; set; }
+        public List<String> Slike { get; set; }
     }
 }

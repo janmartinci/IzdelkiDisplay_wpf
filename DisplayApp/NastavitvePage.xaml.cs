@@ -346,19 +346,14 @@ namespace DisplayApp
         private void SaveButtonNastavitve_Click(object sender, RoutedEventArgs e)
         {
 
-            List<SlikeClass> slikeClasses = new List<SlikeClass>();
             if (ListTrenutnePasiceHolder.Count != 0)
             {
-                foreach (var getImg in ListTrenutnePasiceHolder)
-                {
-                    slikeClasses.Add(new SlikeClass() { UrlSlike = getImg });
-                }
                 var znamkeList = new List<ZnamkeClass> {
 
                     new ZnamkeClass
                     {
                         VrstaZnamke = SelectedZnamka,
-                        Slike = slikeClasses
+                        Slike = ListTrenutnePasiceHolder
 
                     }
                 };

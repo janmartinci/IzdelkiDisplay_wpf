@@ -23,5 +23,20 @@
     <Setting Name="FolderPath" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="HeaderKontrolnoOknoColor" Type="System.String" Scope="User">
+      <Value Profile="(Default)">#ffffff</Value>
+    </Setting>
+    <Setting Name="BodyKontrolnoOKnoColor" Type="System.String" Scope="User">
+      <Value Profile="(Default)">#ffffff</Value>
+    </Setting>
+    <Setting Name="TextKontrolnoOknoColor" Type="System.String" Scope="User">
+      <Value Profile="(Default)">#000000</Value>
+    </Setting>
+    <Setting Name="ButtonKortrolnoOknoOpenColor" Type="System.String" Scope="User">
+      <Value Profile="(Default)">#0bdac2</Value>
+    </Setting>
+    <Setting Name="ButtonKontrolnoOknoNastavitveColor" Type="System.String" Scope="User">
+      <Value Profile="(Default)">#cccccc</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

@@ -8,17 +8,14 @@
     <Setting Name="vodicStep" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">1</Value>
     </Setting>
-    <Setting Name="VodicNarejenWindow" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
     <Setting Name="vodicProOkno" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="vodicNatavitve" Type="System.Boolean" Scope="User">
+    <Setting Name="vodicNastavitveProOkno" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="vodicMain" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
+    <Setting Name="vodicRestart" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="FolderPath" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
@@ -37,6 +34,9 @@
     </Setting>
     <Setting Name="ButtonKontrolnoOknoNastavitveColor" Type="System.String" Scope="User">
       <Value Profile="(Default)">#cccccc</Value>
+    </Setting>
+    <Setting Name="DisplayID" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
     </Setting>
   </Settings>
 </SettingsFile>

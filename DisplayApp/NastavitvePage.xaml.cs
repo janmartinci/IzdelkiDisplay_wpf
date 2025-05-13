@@ -50,7 +50,7 @@ namespace DisplayApp
 
             TrenutnePasice(ListTrenutnePasice);
 
-            if (!Properties.Settings.Default.vodicNatavitve)
+            if (!Properties.Settings.Default.vodicNastavitveProOkno)
             {
                 Vodic.Visibility = Visibility.Collapsed;
                 Vodic2.Visibility = Visibility.Collapsed;
@@ -227,18 +227,6 @@ namespace DisplayApp
 
             TitleNastavitve.Text = "DODAJANJE PASIC";
             PasiceIzFolder(ListTrenutnePasiceHolder);
-        }
-
-        private void ImageOpacity(object sender, MouseButtonEventArgs e, Image slikice)
-        {
-            if (slikice.Opacity == 0.5)
-            {
-                slikice.Opacity = 1;
-            }
-            else
-            {
-                slikice.Opacity = 0.5;
-            }
         }
 
         private void CloseNastavitve(object sender, RoutedEventArgs e)
@@ -449,7 +437,7 @@ namespace DisplayApp
         private void Vodic4_Click(object sender, RoutedEventArgs e)
         {
             Vodic4.Visibility = Visibility.Collapsed;
-            Properties.Settings.Default.vodicNatavitve = false;
+            Properties.Settings.Default.vodicNastavitveProOkno = false;
             Properties.Settings.Default.Save();
         }
     }

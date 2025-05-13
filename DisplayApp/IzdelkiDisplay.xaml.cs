@@ -17,9 +17,6 @@ namespace DisplayApp
     /// </summary>
     public partial class IzdelkiDisplay : Window
     {
-        //event Refresh Main window
-
-        public event EventHandler VodicLastStepOver;
 
         //FullScreen info
         private bool FullScreen = false;
@@ -434,7 +431,6 @@ namespace DisplayApp
             mainContainer.Children.Clear();
             XmalPasica.Source = null;
 
-            //!!!!???!!!
             GC.Collect();
             GC.WaitForPendingFinalizers();
         }
@@ -443,7 +439,6 @@ namespace DisplayApp
         {
             Vodic.Visibility = Visibility.Collapsed;
             Properties.Settings.Default.vodicProOkno = false;
-            Properties.Settings.Default.VodicNarejenWindow = "";
             Properties.Settings.Default.Save();
         }
 

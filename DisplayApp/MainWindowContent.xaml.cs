@@ -16,10 +16,9 @@ namespace DisplayApp
 {
     public partial class MainWindowContent : Page
     {
-        private FileSystemWatcher _watcher;
 
         private DispatcherTimer vodicUtripanjeButton;
-        private StackPanel buttonBorderVodicAnimacija = new StackPanel();
+        private StackPanel BorderVodicAnimacija = new StackPanel();
 
         private bool fadingIn = false;
 
@@ -42,16 +41,30 @@ namespace DisplayApp
         {
             await LoadFolderPasice();
         }
+
         private async Task LoadFolderPasice()
         {
             var pot = Properties.Settings.Default.FolderPath;
+
             if (Directory.Exists(pot))
             {
-                string[] slike = await Task.Run(() => Directory.GetFiles(pot).Where(file => file.ToLower().EndsWith(".jpg") || file.ToLower().EndsWith(".jpeg") ||file.ToLower().EndsWith(".png") ||file.ToLower().EndsWith(".bmp") ||file.ToLower().EndsWith(".gif") ||file.ToLower().EndsWith(".tiff")).OrderByDescending(file => File.GetCreationTime(file)).ToArray());
+                string[] slike = await Task.Run(() =>
+                    Directory.GetFiles(pot)
+                        .Where(file =>
+                            file.ToLower().EndsWith(".jpg") ||
+                            file.ToLower().EndsWith(".jpeg") ||
+                            file.ToLower().EndsWith(".png") ||
+                            file.ToLower().EndsWith(".bmp") ||
+                            file.ToLower().EndsWith(".gif") ||
+                            file.ToLower().EndsWith(".tiff"))
+                        .OrderByDescending(file => File.GetCreationTime(file))
+                        .ToArray()
+                );
+
                 pasiceFromFolder = slike.ToList();
             }
         }
-        
+
         private void FileCheckPasice()
         {
             if (Directory.Exists(Properties.Settings.Default.FolderPath)){
@@ -134,7 +147,7 @@ namespace DisplayApp
                         StackPanel stackPanelDisplay = new StackPanel();
                         stackPanelDisplay.Width = 200;
                         stackPanelDisplay.Margin = new Thickness(10);
-                        buttonBorderVodicAnimacija = stackPanelDisplay;
+                        BorderVodicAnimacija = stackPanelDisplay;
 
 
 
@@ -383,12 +396,23 @@ namespace DisplayApp
 
         private void Dodaj(object sender, RoutedEventArgs e)
         {
-            int i = 0;
-            do
+
+            int i = Properties.Settings.Default.DisplayID;
+
+            while (File.Exists($"display{i}.json"))
             {
                 i++;
-            } while (File.Exists($"display{i}.json"));
-            NavigationService.GetNavigationService(this).Navigate( new AddDisplayStep1($"display{i}", izdelek, pasiceFromFolder));
+            }
+
+            Properties.Settings.Default.DisplayID = i + 1;
+            Properties.Settings.Default.Save();
+            NavigationService.GetNavigationService(this).Navigate(new AddDisplayStep1($"display{i}", izdelek, pasiceFromFolder));
+
+            //do
+            //{
+            //    i++;
+            //} while (File.Exists($"display{i}.json"));
+            //NavigationService.GetNavigationService(this).Navigate( new AddDisplayStep1($"display{i}", izdelek, pasiceFromFolder));
 
         }
 
@@ -442,7 +466,7 @@ namespace DisplayApp
                 //Utripajpče novo nadzorno okno fadein
                 if (Properties.Settings.Default.vodicStep == 3)
                 {
-                    buttonBorderVodicAnimacija.BeginAnimation(UIElement.OpacityProperty, animacijaIn);
+                    BorderVodicAnimacija.BeginAnimation(UIElement.OpacityProperty, animacijaIn);
                 }
                 fadingIn = false;
                 vodicUtripanjeButton.Interval = TimeSpan.FromSeconds(sekundeTimer);
@@ -467,7 +491,7 @@ namespace DisplayApp
                 //Utripajpče novo nadzorno okno fadeout
                 if (Properties.Settings.Default.vodicStep == 3)
                 {
-                    buttonBorderVodicAnimacija.BeginAnimation(UIElement.OpacityProperty, animacijaOut);
+                    BorderVodicAnimacija.BeginAnimation(UIElement.OpacityProperty, animacijaOut);
                 }
                 vodicUtripanjeButton.Interval = TimeSpan.FromSeconds(sekundeTimer);
                 fadingIn = true;
@@ -476,7 +500,7 @@ namespace DisplayApp
         private void VodicStatus()
         {
 
-            if (Properties.Settings.Default.prvicRun)
+            if (Properties.Settings.Default.prvicRun || Properties.Settings.Default.vodicRestart)
             {
                 Vodic.Visibility = Visibility.Visible;
                 VodicTimer();
@@ -891,19 +915,23 @@ namespace DisplayApp
                     To = 1
 
                 };
-
-                buttonBorderVodicAnimacija.BeginAnimation(UIElement.OpacityProperty, animacijaIn);
+                BorderVodicAnimacija.BeginAnimation(UIElement.OpacityProperty, animacijaIn);
                 Properties.Settings.Default.prvicRun = false;
+                Properties.Settings.Default.vodicRestart = false;
                 Properties.Settings.Default.Save();
-
+                if (!File.Exists(@"C:\DisplayApp\ProgramData\status.marker"))
+                {
+                    Directory.CreateDirectory(Path.GetDirectoryName(@"C:\DisplayApp\ProgramData\status.marker"));
+                    File.WriteAllText(@"C:\DisplayApp\ProgramData\status.marker", "namesceno");
+                }
             }
         }
 
         private void VodicOpen(object sender, RoutedEventArgs e)
         {
             Properties.Settings.Default.vodicStep = 1;
-            Properties.Settings.Default.prvicRun = true;
-            Properties.Settings.Default.vodicNatavitve = true;
+            Properties.Settings.Default.vodicRestart = true;
+            Properties.Settings.Default.vodicNastavitveProOkno = true;
             Properties.Settings.Default.vodicProOkno = true;
             Properties.Settings.Default.Save();
             vodicClickIcon.Kind = PackIconKind.ForwardOutline;
@@ -917,9 +945,15 @@ namespace DisplayApp
             if (msg == MessageBoxResult.Yes) {
                 Properties.Settings.Default.vodicStep = 5;
                 Properties.Settings.Default.prvicRun = false;
-                Properties.Settings.Default.vodicNatavitve = false;
+                Properties.Settings.Default.vodicNastavitveProOkno = false;
                 Properties.Settings.Default.Save();
                 Vodic.Visibility = Visibility.Collapsed;
+
+                if (!File.Exists(@"C:\DisplayApp\ProgramData\status.marker"))
+                {
+                    Directory.CreateDirectory(Path.GetDirectoryName(@"C:\DisplayApp\ProgramData\status.marker"));
+                    File.WriteAllText(@"C:\DisplayApp\ProgramData\status.marker", "namesceno");
+                }
             }
         }
 

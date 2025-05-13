@@ -49,18 +49,6 @@ namespace DisplayApp.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string VodicNarejenWindow {
-            get {
-                return ((string)(this["VodicNarejenWindow"]));
-            }
-            set {
-                this["VodicNarejenWindow"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool vodicProOkno {
             get {
@@ -74,24 +62,24 @@ namespace DisplayApp.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool vodicNatavitve {
+        public bool vodicNastavitveProOkno {
             get {
-                return ((bool)(this["vodicNatavitve"]));
+                return ((bool)(this["vodicNastavitveProOkno"]));
             }
             set {
-                this["vodicNatavitve"] = value;
+                this["vodicNastavitveProOkno"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool vodicMain {
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool vodicRestart {
             get {
-                return ((bool)(this["vodicMain"]));
+                return ((bool)(this["vodicRestart"]));
             }
             set {
-                this["vodicMain"] = value;
+                this["vodicRestart"] = value;
             }
         }
         
@@ -164,6 +152,18 @@ namespace DisplayApp.Properties {
             }
             set {
                 this["ButtonKontrolnoOknoNastavitveColor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int DisplayID {
+            get {
+                return ((int)(this["DisplayID"]));
+            }
+            set {
+                this["DisplayID"] = value;
             }
         }
     }

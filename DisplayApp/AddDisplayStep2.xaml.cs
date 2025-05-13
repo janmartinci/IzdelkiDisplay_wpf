@@ -53,7 +53,7 @@ namespace DisplayApp
 
                         };
 
-                        var image = await LoadImageAsync(s);
+                        var image = await LoadSlikeAsync(s);
 
                         Image Slikice = new Image
                         {
@@ -78,7 +78,7 @@ namespace DisplayApp
                     }
                     catch(Exception imgEx)
                     {
-                        MessageBox.Show($"Error loading image: {s}\n{imgEx.Message}");
+                        MessageBox.Show($"Error nalaganje slik: {s}\n{imgEx.Message}");
                     }
                 }
             }
@@ -89,7 +89,7 @@ namespace DisplayApp
 
         }
 
-        private Task<BitmapImage> LoadImageAsync(string imagePath)
+        private Task<BitmapImage> LoadSlikeAsync(string imagePath)
         {
             return Task.Run(() =>
             {
@@ -108,18 +108,6 @@ namespace DisplayApp
                 }
                 return bitmapImage;
             });
-        }
-
-        private void ImageOpacity(object sender, MouseButtonEventArgs e, Image slikice)
-        {
-            if (slikice.Opacity == 0.5)
-            {
-                slikice.Opacity = 1;
-            }
-            else
-            {
-                slikice.Opacity = 0.5;
-            }
         }
 
         private void IzbiraSlike_Click(object sender, RoutedEventArgs e)
@@ -158,12 +146,8 @@ namespace DisplayApp
                 string jsonString = JsonSerializer.Serialize(znamkeList, nastavitveJson);
                 File.WriteAllText($"{FileNameData}.json", jsonString);
 
-                if (Properties.Settings.Default.prvicRun)
-                {
-                    Properties.Settings.Default.vodicStep = 3;
-                    Properties.Settings.Default.VodicNarejenWindow = $"{FileNameData}.json";
-                    Properties.Settings.Default.Save();
-                }
+                Properties.Settings.Default.vodicStep = 3;
+                Properties.Settings.Default.Save();
 
                 NavigationService.Navigate(new MainWindowContent(izdelek));
             }

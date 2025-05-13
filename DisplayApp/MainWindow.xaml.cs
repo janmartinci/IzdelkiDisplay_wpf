@@ -21,6 +21,19 @@ namespace DisplayApp
         {
             InitializeComponent();
             XmlLoad();
+            prviInstall();
+        }
+
+        public static void prviInstall()
+        {
+            string markerPot = @"C:\DisplayApp\ProgramData\status.marker";
+
+            if (File.Exists(markerPot))
+            {
+                Properties.Settings.Default.prvicRun = false;
+            }
+            Properties.Settings.Default.Save();
+
         }
 
         private void XmlLoad()

@@ -30,7 +30,7 @@ namespace DisplayApp
         private List<XElement> izdelek;
         
         //Za Pasice
-        private int IdexOfPasice = 0;
+        private int IndexOfPasice = 0;
         private List<string> pasiceFrFile;
         public IzdelkiDisplay(string znamka, List<string> pasiceFromFile, List<XElement> XmlLoadData, string DisplayXName)
         {
@@ -40,7 +40,7 @@ namespace DisplayApp
             izdelek = XmlLoadData;
             this.Title = DisplayXName;
             TimerPasice();
-            TimerSet();
+            TimerIzdelki();
 
             if (!Properties.Settings.Default.vodicProOkno)
             {
@@ -92,17 +92,17 @@ namespace DisplayApp
         {
             timerPasice = new DispatcherTimer();
             timerPasice.Interval = TimeSpan.FromSeconds(10);
-            timerPasice.Tick += TickImage;
+            timerPasice.Tick += TickPasice;
             timerPasice.Start();
 
             DisplayPasica();
         }
 
-        private void TickImage(object sender, EventArgs e) {
-            IdexOfPasice++;
-            if( IdexOfPasice >= pasiceFrFile.Count)
+        private void TickPasice(object sender, EventArgs e) {
+            IndexOfPasice++;
+            if( IndexOfPasice >= pasiceFrFile.Count)
             {
-                IdexOfPasice = 0;
+                IndexOfPasice = 0;
             }
             if(pasiceFrFile.Count == 1) {
 
@@ -116,12 +116,12 @@ namespace DisplayApp
         {
             try {
 
-                BitmapImage bitmapPaasica = new BitmapImage();
-                bitmapPaasica.BeginInit();
-                bitmapPaasica.UriSource = new Uri(pasiceFrFile[IdexOfPasice]);
-                bitmapPaasica.EndInit();
+                BitmapImage bitmapPasica = new BitmapImage();
+                bitmapPasica.BeginInit();
+                bitmapPasica.UriSource = new Uri(pasiceFrFile[IndexOfPasice]);
+                bitmapPasica.EndInit();
 
-                XmalPasica.Source = bitmapPaasica;
+                XmalPasica.Source = bitmapPasica;
 
             }
             catch(Exception ex)
@@ -131,17 +131,17 @@ namespace DisplayApp
         }
 
         //Artikle Timer
-        private void TimerSet()
+        private void TimerIzdelki()
         {
             timerIzdelki = new DispatcherTimer();
             timerIzdelki.Interval = TimeSpan.FromSeconds(15);
-            timerIzdelki.Tick += TimerTrigger;
+            timerIzdelki.Tick += TickIzdelki;
             timerIzdelki.Start();
 
             LoadData(znamkaHolder);
         }
 
-        private void TimerTrigger(object sender, EventArgs e)
+        private void TickIzdelki(object sender, EventArgs e)
         {
             if (fadingIn)
             {
@@ -340,10 +340,17 @@ namespace DisplayApp
                 Grid gridImg = new Grid();
                 cardImg.Content = gridImg;
 
+                BitmapImage bitmapSlika = new BitmapImage();
+                bitmapSlika.BeginInit();
+                bitmapSlika.UriSource = new Uri(slika);
+                bitmapSlika.CacheOption = BitmapCacheOption.OnLoad;
+                bitmapSlika.EndInit();
+
                 Image img = new Image
                 {
-                    Source = new BitmapImage(new Uri($"{slika}"))
+                    Source = bitmapSlika
                 };
+
                 gridImg.Children.Add(img);
 
                 //Opsi in Cena
@@ -421,11 +428,11 @@ namespace DisplayApp
         private void Window_Closing(object sender, CancelEventArgs e)
         {
             timerPasice.Stop();
-            timerPasice.Tick -= TickImage;
+            timerPasice.Tick -= TickPasice;
             timerPasice = null;
 
             timerIzdelki.Stop();
-            timerIzdelki.Tick -= TimerTrigger;
+            timerIzdelki.Tick -= TickIzdelki;
             timerIzdelki = null;
 
             mainContainer.Children.Clear();

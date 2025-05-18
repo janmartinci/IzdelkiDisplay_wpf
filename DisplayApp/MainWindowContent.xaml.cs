@@ -120,7 +120,11 @@ namespace DisplayApp
             var DatotekaPath = Directory.GetCurrentDirectory();
             var oblikaFile = "display*.json";
 
-            var files = new DirectoryInfo(DatotekaPath).GetFiles(oblikaFile).Where(f => Regex.IsMatch(f.Name, @"^display\d+\.json$")).OrderBy(f => int.Parse(Regex.Match(f.Name, @"\d+").Value)).ToArray();
+            var files = new DirectoryInfo(DatotekaPath)
+                .GetFiles(oblikaFile)
+                .Where(f => Regex.IsMatch(f.Name, @"^display\d+\.json$"))
+                .OrderBy(f => int.Parse(Regex.Match(f.Name, @"\d+").Value))
+                .ToArray();
 
             int pozicija = 1;
             foreach (var file in files)
@@ -236,14 +240,14 @@ namespace DisplayApp
                         };
                         InfoWrapPanel2.Children.Add(InfoImg);
 
-                        TextBlock ZnamkaTextBlock2 = new TextBlock
+                        TextBlock StSlikTextBlock = new TextBlock
                         {
                             FontSize = 15,
                             VerticalAlignment = VerticalAlignment.Center,
                             Padding = new Thickness(5),
                             Text = $"{StSlik}"
                         };
-                        InfoWrapPanel2.Children.Add(ZnamkaTextBlock2);
+                        InfoWrapPanel2.Children.Add(StSlikTextBlock);
 
                         //Za button
 
@@ -342,7 +346,7 @@ namespace DisplayApp
 
                         var znamkeToDisplay = znamka.VrstaZnamke;
                         string DisplayXName = $"Ekran {pozicija}";
-                        buttonOpen.Click += (sender, e) => Button_Click_Open(sender, e, znamkeToDisplay, PasiceFromFile, izdelek, DisplayXName);
+                        buttonOpen.Click += (sender, e) => PromocijskoOknoOpen(sender, e, znamkeToDisplay, PasiceFromFile, izdelek, DisplayXName);
                         buttonRemoveDisplay.Click += (sender, e) => DeleteDisplay(sender, e, file.Name);
                         buttonNastavitve.Click += (sender, e) => NastavitvePageOpen(sender, e, file.Name, znamka.VrstaZnamke, PasiceFromFile, izdelek, DisplayXName);
                     }
@@ -351,7 +355,7 @@ namespace DisplayApp
             }
         }
 
-        private void Button_Click_Open(object sender, RoutedEventArgs e, string znamkePassWindow, List<string> pasiceFromFile, List<XElement> XmlLoadData, string DisplayXName)
+        private void PromocijskoOknoOpen(object sender, RoutedEventArgs e, string znamkePassWindow, List<string> pasiceFromFile, List<XElement> XmlLoadData, string DisplayXName)
         {
             if(pasiceFromFile.Count() > 0)
             {

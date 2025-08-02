@@ -11,55 +11,55 @@
     <Page.Resources>
         <ResourceDictionary>
             <Style x:Key="CustomRemoveDisplayStyle" TargetType="{x:Type Button}">
-                <Setter Property="Background" Value="White"/>
+                <Setter Property="Background" Value="Transparent"/>
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type Button}">
-                            <Border Background="{TemplateBinding Background}" CornerRadius="5">
+                            <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="6">
                                 <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="#999595"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
-                <Style.Triggers>
-                    <Trigger Property="IsMouseOver" Value="True">
-                        <Setter Property="Background" Value="#999595"/>
-                    </Trigger>
-                </Style.Triggers>
             </Style>
             <Style x:Key="CusttomButtonAdd" TargetType="{x:Type Button}">
-                <Setter Property="Background" Value="#0bdac2"/>
+                <Setter Property="Background" Value="#cccccc"/>
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type Button}">
-                            <Border Background="{TemplateBinding Background}" CornerRadius="6">
+                            <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="6">
                                 <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="#999595"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
-                <Style.Triggers>
-                    <Trigger Property="IsMouseOver" Value="True">
-                        <Setter Property="Background" Value="#999595"/>
-                    </Trigger>
-                </Style.Triggers>
             </Style>
             <Style x:Key="CusttomButtonNastaviteve" TargetType="{x:Type Button}">
                 <Setter Property="Background" Value="#cccccc"/>
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type Button}">
-                            <Border Background="{TemplateBinding Background}">
+                            <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="6">
                                 <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="#999595"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
-                <Style.Triggers>
-                    <Trigger Property="IsMouseOver" Value="True">
-                        <Setter Property="Background" Value="#999595"/>
-                    </Trigger>
-                </Style.Triggers>
             </Style>
             <Style x:Key="ScrollThumbs" TargetType="{x:Type Thumb}">
                 <Setter Property="Template">
@@ -212,7 +212,7 @@
                         <Image Source="/Resources/techtrade_Logo.png" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0 0 0 0" Width="105"/>
                     </WrapPanel>
                 </Grid>
-                <Grid Grid.Row="2" Background="#F6F5F8" Cursor="Hand">
+                <Grid Grid.Row="2" Background="#F6F5F8" x:Name="BGNadzornaPloscaNav" Cursor="Hand">
                     <materialDesign:Card HorizontalAlignment="Center" VerticalAlignment="Center" Background="#FF3A3A3A" UniformCornerRadius="10">
                         <WrapPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                             <Button x:Name="add" Foreground="{x:Null}" BorderBrush="{x:Null}" Cursor="Hand" Click="Dodaj" Width="40" Height="40">
@@ -310,7 +310,11 @@
                     </materialDesign:Card>
                 </Grid>
                 <Grid Grid.Row="1">
-                    <ScrollViewer VerticalScrollBarVisibility="Auto" PanningMode="None" CanContentScroll="False">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="931*"/>
+                        <ColumnDefinition Width="69*"/>
+                    </Grid.ColumnDefinitions>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" x:Name="BGNadzornaPloscaScrollViewer" PanningMode="None" CanContentScroll="False" Grid.ColumnSpan="2">
                         <WrapPanel Name="AllDisplays" Margin="0">
 
                         </WrapPanel>

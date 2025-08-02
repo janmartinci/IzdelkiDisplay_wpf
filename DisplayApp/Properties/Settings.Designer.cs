@@ -166,5 +166,17 @@ namespace DisplayApp.Properties {
                 this["DisplayID"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#ffffff")]
+        public string NadzornaPloscaColor {
+            get {
+                return ((string)(this["NadzornaPloscaColor"]));
+            }
+            set {
+                this["NadzornaPloscaColor"] = value;
+            }
+        }
     }
 }

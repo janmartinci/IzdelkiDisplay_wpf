@@ -19,6 +19,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Xml.Linq;
 using System.ComponentModel;
+using System.Runtime.InteropServices;
 
 namespace DisplayApp
 {
@@ -28,6 +29,7 @@ namespace DisplayApp
     public partial class MainWindowSettings : Page, INotifyPropertyChanged
     {
 
+        private string NadzornaPloscaColor;
         private string HeaderKontrolnoOknoColor;
         private string BodyKontrolnoOknoColor;
         private string KontrolnoOknoTextColor;
@@ -38,6 +40,9 @@ namespace DisplayApp
             InitializeComponent();
             FolderPathText.Text = Properties.Settings.Default.FolderPath;
             DataContext = this;
+
+            //Naloži barvo za nadzorno ploščo
+            colorPickerNadzornaPlosca.SelectedColor = (Color)ColorConverter.ConvertFromString(Properties.Settings.Default.NadzornaPloscaColor);
 
             //Naloži barvo za headerKontrolnoOkno
             colorPickerHeader.SelectedColor = (Color)ColorConverter.ConvertFromString(Properties.Settings.Default.HeaderKontrolnoOknoColor);
@@ -97,9 +102,10 @@ namespace DisplayApp
             }
         }
 
-        private void ColorPicker_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color?> e)
+        private void ColorPicker_NadzornaPlosca(object sender, RoutedPropertyChangedEventArgs<Color?> e)
         {
             var selectedColor = e.NewValue;
+            NadzornaPloscaColor = selectedColor.ToString();
         }
 
         private void ColorPicker_BodyKontrolnoOKno(object sender, RoutedPropertyChangedEventArgs<Color?> e)
@@ -147,7 +153,42 @@ namespace DisplayApp
             Properties.Settings.Default.ButtonKontrolnoOknoNastavitveColor = ButtonKontrolnoOknoNastavitveColor;
             Properties.Settings.Default.ButtonKortrolnoOknoOpenColor = ButtonKortrolnoOknoOpenColor;
             Properties.Settings.Default.TextKontrolnoOknoColor = KontrolnoOknoTextColor;
+            Properties.Settings.Default.NadzornaPloscaColor = NadzornaPloscaColor;
             Properties.Settings.Default.Save();
+            AutoCloseMessageBox.Show("Shranjeno", 1000); // Closes after 3 seconds
+        }
+
+        //Msg box show
+        public static class AutoCloseMessageBox
+        {
+            [DllImport("user32.dll", SetLastError = true)]
+            private static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+
+            [DllImport("user32.dll", SetLastError = true)]
+            private static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+
+            private const uint WM_CLOSE = 0x0010;
+
+            public static void Show(string text, int timeoutMilliseconds)
+            {
+                string caption = " "; // must match exactly
+
+                Thread closer = new Thread(() =>
+                {
+                    Thread.Sleep(timeoutMilliseconds); // wait for timeout
+
+                    IntPtr hWnd = FindWindow(null, caption);
+                    if (hWnd != IntPtr.Zero)
+                    {
+                        PostMessage(hWnd, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
+                    }
+                });
+
+                closer.IsBackground = true;
+                closer.Start();
+
+                MessageBox.Show(text, caption); // will be auto-closed
+            }
         }
     }
 }

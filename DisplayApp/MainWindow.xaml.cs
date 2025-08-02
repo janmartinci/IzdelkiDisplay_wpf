@@ -26,11 +26,21 @@ namespace DisplayApp
 
         public static void prviInstall()
         {
-            string markerPot = @"C:\DisplayApp\ProgramData\status.marker";
+            string markerPot = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
+            "DisplayApp", "status.marker");
 
             if (File.Exists(markerPot))
             {
                 Properties.Settings.Default.prvicRun = false;
+            }
+            else
+            {
+                if (!Properties.Settings.Default.prvicRun)
+                {
+                    Directory.CreateDirectory(Path.GetDirectoryName(markerPot));
+                    File.WriteAllText(markerPot, "namesceno");
+                }
             }
             Properties.Settings.Default.Save();
 

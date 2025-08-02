@@ -163,7 +163,7 @@
                     </Grid>
                     <Grid Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right">
                         <WrapPanel>
-                            <Button Width="45" Margin="0 0 5 0" BorderBrush="{x:Null}" Foreground="{x:Null}" Padding="0" Click="ShraniNastaviteMain" >
+                            <Button Width="45" Margin="0 0 5 0" Cursor="Hand" BorderBrush="{x:Null}" Foreground="{x:Null}" Padding="0" Click="ShraniNastaviteMain" >
                                 <materialDesign:PackIcon Height="20" Width="20" Kind="ContentSave" VerticalAlignment="Center" Foreground="#FF31E4BF"/>
                                 <Button.Style>
                                     <Style TargetType="{x:Type Button}">
@@ -171,17 +171,17 @@
                                         <Setter Property="Template">
                                             <Setter.Value>
                                                 <ControlTemplate TargetType="{x:Type Button}">
-                                                    <Border Background="{TemplateBinding Background}" CornerRadius="5">
+                                                    <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="5">
                                                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                     </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter TargetName="border" Property="Background" Value="#4f4d4d"/>
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
                                                 </ControlTemplate>
                                             </Setter.Value>
                                         </Setter>
-                                        <Style.Triggers>
-                                            <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter Property="Background" Value="#4f4d4d"/>
-                                            </Trigger>
-                                        </Style.Triggers>
                                     </Style>
                                 </Button.Style>
                             </Button>
@@ -278,7 +278,7 @@
                             <materialDesign:Card Margin="4" HorizontalAlignment="Left" Background="#FF3A3A3A" UniformCornerRadius="5" Height="20">
                                 <TextBlock Text="Barva" Margin="5 0 5 0" Foreground="White" VerticalAlignment="Center"></TextBlock>
                             </materialDesign:Card>
-                            <xctk:ColorPicker x:Name="colorPicker" ShowStandardColors="False" AvailableColorsHeader="Ssadasd" StandardTabHeader="Barve" RecentColorsHeader="sss" AdvancedTabHeader="Barva po izbiri" AvailableColorsSortingMode="Alphabetical" SelectedColorChanged="ColorPicker_SelectedColorChanged" Width="50"/>
+                            <xctk:ColorPicker x:Name="colorPickerNadzornaPlosca" ShowStandardColors="False" AvailableColorsHeader="Ssadasd" StandardTabHeader="Barve" RecentColorsHeader="sss" AdvancedTabHeader="Barva po izbiri" AvailableColorsSortingMode="Alphabetical" SelectedColorChanged="ColorPicker_NadzornaPlosca" Width="50"/>
                         </StackPanel>
                         <Line
                             X1="0" Y1="0" X2="1" Y2="0"

@@ -31,10 +31,17 @@ namespace DisplayApp
             izdelek = FromMainWindowXmlload;
             FileCheckPasice();
             VodicStatus();
+            BGNadzornaPloscaColor();
             //Preveri ce pride do spremebe pri Properties settings
             Properties.Settings.Default.PropertyChanged += PropertySettingsChanged;
 
 
+        }
+
+        private void BGNadzornaPloscaColor()
+        {
+            BGNadzornaPloscaScrollViewer.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Properties.Settings.Default.NadzornaPloscaColor));
+            BGNadzornaPloscaNav.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Properties.Settings.Default.NadzornaPloscaColor));
         }
 
         private async void NaloziAsyncFunkcije()
@@ -96,7 +103,9 @@ namespace DisplayApp
             }
             else
             {
-                MessageBox.Show($"Datoteka {Properties.Settings.Default.FolderPath} ne obstaja več ali pa je prišlo do spremebe imena. Ponovno izberi datoteko za pasice!");
+                if (!Properties.Settings.Default.prvicRun) {
+                    MessageBox.Show($"Datoteka {Properties.Settings.Default.FolderPath} ne obstaja več ali pa je prišlo do spremebe imena. Ponovno izberi datoteko za pasice!");
+                }
 
                 if (PasiceFolderSelector.Visibility != Visibility.Visible)
                 {
@@ -172,7 +181,9 @@ namespace DisplayApp
                             HorizontalAlignment = HorizontalAlignment.Center,
                             Padding = new Thickness(5),
                             FontWeight = FontWeights.SemiBold,
-                            Text = $"Ekran {pozicija}"
+                            Text = $"Ekran {pozicija}",
+                            Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Properties.Settings.Default.TextKontrolnoOknoColor))
+
                         };
 
                         GridCardTitle.Children.Add(textBlockTitle);
@@ -181,8 +192,8 @@ namespace DisplayApp
                         {
                             VerticalAlignment = VerticalAlignment.Top,
                             HorizontalAlignment = HorizontalAlignment.Right,
-                            Style = (Style)FindResource("CustomRemoveDisplayStyle")
-
+                            Style = (Style)FindResource("CustomRemoveDisplayStyle"),
+                            Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Properties.Settings.Default.HeaderKontrolnoOknoColor))
                         };
 
                         PackIcon RemoveDispaly = new PackIcon()
@@ -205,10 +216,10 @@ namespace DisplayApp
                         Card InfoCard = new Card
                         {
                             Background = Brushes.White,
-                            Margin = new Thickness(0, 5, 0, 5)
+                            Margin = new Thickness(0, 5, 0, 5),
                         };
 
-                        StackPanel InfoStackPanel = new StackPanel();
+                        StackPanel InfoStackPanel = new StackPanel { Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Properties.Settings.Default.BodyKontrolnoOKnoColor)) };
                         InfoCard.Content = InfoStackPanel;
 
                         WrapPanel InfoWrapPanel = new WrapPanel();
@@ -220,7 +231,8 @@ namespace DisplayApp
                             FontSize = 15,
                             VerticalAlignment = VerticalAlignment.Center,
                             Padding = new Thickness(5),
-                            Text = znamka.VrstaZnamke
+                            Text = znamka.VrstaZnamke,
+                            Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Properties.Settings.Default.TextKontrolnoOknoColor))
                         };
                         InfoWrapPanel.Children.Add(ZnamkaTextBlock);
 
@@ -235,7 +247,7 @@ namespace DisplayApp
                             VerticalAlignment = VerticalAlignment.Center,
                             Height = 25,
                             Width = 25,
-                            Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF333333"))
+                            Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Properties.Settings.Default.TextKontrolnoOknoColor))
 
                         };
                         InfoWrapPanel2.Children.Add(InfoImg);
@@ -245,7 +257,8 @@ namespace DisplayApp
                             FontSize = 15,
                             VerticalAlignment = VerticalAlignment.Center,
                             Padding = new Thickness(5),
-                            Text = $"{StSlik}"
+                            Text = $"{StSlik}",
+                            Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Properties.Settings.Default.TextKontrolnoOknoColor))
                         };
                         InfoWrapPanel2.Children.Add(StSlikTextBlock);
 
@@ -264,10 +277,11 @@ namespace DisplayApp
                         var buttonOpen = new Button
                         {
                             Width = 100,
-                            Style = (Style)FindResource("CusttomButtonAdd")
+                            Style = (Style)FindResource("CusttomButtonAdd"),
+                            Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Properties.Settings.Default.ButtonKortrolnoOknoOpenColor)),
                         };
 
-                        var gridOpenContent = new Grid();
+                        var gridOpenContent = new Grid ( );
 
                         var borderOpenButton = new Border
                         {
@@ -288,7 +302,7 @@ namespace DisplayApp
                             Height = 25,
                             VerticalContentAlignment = VerticalAlignment.Center,
                             HorizontalAlignment = HorizontalAlignment.Center,
-                            Foreground = new SolidColorBrush(Color.FromRgb(51, 51, 51))
+                            Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Properties.Settings.Default.TextKontrolnoOknoColor))
                         };
 
                         gridOpenContent.Children.Add(borderOpenButton);
@@ -299,10 +313,11 @@ namespace DisplayApp
                         var buttonNastavitve = new Button
                         {
                             Width = 100,
-                            Style = (Style)FindResource("CusttomButtonNastaviteve")
+                            Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Properties.Settings.Default.ButtonKontrolnoOknoNastavitveColor)),
+                            Style = (Style)FindResource("CusttomButtonNastaviteve"),
                         };
 
-                        var gridNastavitve = new Grid();
+                        var gridNastavitve = new Grid ( );
 
                         var borderNastavitveButton = new Border
                         {
@@ -321,7 +336,7 @@ namespace DisplayApp
                             VerticalAlignment = VerticalAlignment.Center,
                             Width = 25,
                             Height = 25,
-                            Foreground = new SolidColorBrush(Color.FromRgb(51, 51, 51)),
+                            Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Properties.Settings.Default.TextKontrolnoOknoColor)),
                             VerticalContentAlignment = VerticalAlignment.Center,
                             HorizontalAlignment = HorizontalAlignment.Center,
                             
@@ -923,10 +938,11 @@ namespace DisplayApp
                 Properties.Settings.Default.prvicRun = false;
                 Properties.Settings.Default.vodicRestart = false;
                 Properties.Settings.Default.Save();
-                if (!File.Exists(@"C:\DisplayApp\ProgramData\status.marker"))
+                string markerPot = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),"DisplayApp", "status.marker");
+                if (!File.Exists(markerPot))
                 {
-                    Directory.CreateDirectory(Path.GetDirectoryName(@"C:\DisplayApp\ProgramData\status.marker"));
-                    File.WriteAllText(@"C:\DisplayApp\ProgramData\status.marker", "namesceno");
+                    Directory.CreateDirectory(Path.GetDirectoryName(markerPot));
+                    File.WriteAllText(markerPot, "namesceno");
                 }
             }
         }
@@ -950,13 +966,15 @@ namespace DisplayApp
                 Properties.Settings.Default.vodicStep = 5;
                 Properties.Settings.Default.prvicRun = false;
                 Properties.Settings.Default.vodicNastavitveProOkno = false;
+                Properties.Settings.Default.vodicRestart=false;
                 Properties.Settings.Default.Save();
                 Vodic.Visibility = Visibility.Collapsed;
 
-                if (!File.Exists(@"C:\DisplayApp\ProgramData\status.marker"))
+                string markerPot = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "DisplayApp", "status.marker");
+                if (!File.Exists(markerPot))
                 {
-                    Directory.CreateDirectory(Path.GetDirectoryName(@"C:\DisplayApp\ProgramData\status.marker"));
-                    File.WriteAllText(@"C:\DisplayApp\ProgramData\status.marker", "namesceno");
+                    Directory.CreateDirectory(Path.GetDirectoryName(markerPot));
+                    File.WriteAllText(markerPot, "namesceno");
                 }
             }
         }
@@ -972,10 +990,11 @@ namespace DisplayApp
             {
                 FileCheckPasice();
             }
-            if (e.PropertyName == "HeaderKontrolnoOknoColor" || e.PropertyName == "BodyKontrolnoOKnoColor" || e.PropertyName == "TextKontrolnoOknoColor" || e.PropertyName == "ButtonKortrolnoOknoOpenColor" || e.PropertyName == "ButtonKontrolnoOknoNastavitveColor")
+            if (e.PropertyName == "HeaderKontrolnoOknoColor" || e.PropertyName == "BodyKontrolnoOKnoColor" || e.PropertyName == "TextKontrolnoOknoColor" || e.PropertyName == "ButtonKortrolnoOknoOpenColor" || e.PropertyName == "ButtonKontrolnoOknoNastavitveColor" || e.PropertyName == "NadzornaPloscaColor")
             {
                 AllDisplays.Children.Clear();
                 JsonDataLoad();
+                BGNadzornaPloscaColor();
             }
         }
     }

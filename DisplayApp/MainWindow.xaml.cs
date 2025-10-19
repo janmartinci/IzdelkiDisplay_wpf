@@ -1,13 +1,23 @@
-﻿using System.Windows;
+﻿using System.ComponentModel;
+using System.DirectoryServices;
+using System.IO;
+using System.Net.Http;
+using System.Text.Json;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Xml.Linq;
 using MaterialDesignThemes.Wpf;
-using System.IO;
-using System.Windows.Input;
-using System.Text.Json;
-using System.ComponentModel;
-using System.DirectoryServices;
+using System.Net.Http;
+using System.Threading.Tasks;
+using HtmlAgilityPack;
+using SQLitePCL;
+using System.Windows.Documents;
+using System.Runtime.CompilerServices;
+using System.Security.Cryptography.Pkcs;
+using System.Windows.Automation.Peers;
+using System.Xml;
 
 namespace DisplayApp
 {
@@ -17,6 +27,7 @@ namespace DisplayApp
     public partial class MainWindow : Window
     {
         private List<XElement> izdelek;
+        private List<XElement> izdelekNovo;
         public MainWindow()
         {
             InitializeComponent();
@@ -46,6 +57,7 @@ namespace DisplayApp
 
         }
 
+
         private void XmlLoad()
         {
             BackgroundWorker worker = new BackgroundWorker();
@@ -58,11 +70,15 @@ namespace DisplayApp
                     worker.ReportProgress(i);
                 }
                 string xmlDatotekaUrl = "https://integration.techtrade.si/IzvozIzdelkovXML?X=711957605";
+                string xmlLoadNoviIzdelki = "https://www.techtrade.si/newproducts/rss";
                 try
                 {
                     //xml load
+                    XDocument xmlNovo = XDocument.Load(xmlLoadNoviIzdelki);
                     XDocument xml = XDocument.Load(xmlDatotekaUrl);
+
                     izdelek = xml.Descendants("izdelek").ToList();
+                    izdelekNovo = xmlNovo.Descendants("item").ToList();
 
                     for (int i = 88; i <= 100; i++)
                     {
@@ -87,6 +103,7 @@ namespace DisplayApp
 
                 XmlLoadProgressBar.Visibility = Visibility.Hidden;
                 Pages.Visibility = Visibility.Visible;
+               _ = NoviIzdelkiVxml(izdelekNovo);
                 Pages.Navigate(new MainWindowContent(izdelek));
 
             };
@@ -94,6 +111,83 @@ namespace DisplayApp
             worker.RunWorkerAsync();
 
 
+        }
+
+        
+        private async Task NoviIzdelkiVxml(List<XElement> izdelekNovo)
+        {
+            try
+            {
+                foreach(var NoviIzdelek in izdelekNovo)
+                {
+                    var WebLink = NoviIzdelek.Element("link")?.Value;
+                    if (!string.IsNullOrWhiteSpace(WebLink))
+                    {
+                        await ScrapeProductAsync(WebLink);
+                    }
+                }
+            }
+            catch(Exception ex) {
+
+                MessageBox.Show($"Error nalaganje slik: {ex.Message}");
+            }
+        }
+
+        public async Task ScrapeProductAsync(string url)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                string html = await client.GetStringAsync(url);
+
+                HtmlDocument doc = new HtmlDocument();
+                doc.LoadHtml(html);
+
+                string titleNode = doc.DocumentNode.SelectSingleNode("//h1[@itemprop='name']")?.InnerText.Trim() ?? "Not found"; ;
+                string shifra = doc.DocumentNode.SelectSingleNode("//span[@itemprop='sku']")?.InnerText.Trim() ?? "Not found"; ;
+                string imageNode = doc.DocumentNode.SelectSingleNode("//img[@itemprop='image']")?.GetAttributeValue("src", "Not found"); ;
+
+                XmlDocument xmlNoviIzdellki = new XmlDocument();
+                XmlElement xml;
+
+                if (File.Exists("NoviIzdellkiXml.xml"))
+                {
+                    xmlNoviIzdellki.Load("NoviIzdellkiXml.xml");
+                    xml = xmlNoviIzdellki.DocumentElement;
+                }
+                else
+                {
+                    var dec = xmlNoviIzdellki.CreateXmlDeclaration("1.0", "utf-8", null);
+                    xmlNoviIzdellki.AppendChild(dec);
+                    xml = xmlNoviIzdellki.CreateElement("NoviIzdelki");
+                    xmlNoviIzdellki.AppendChild(xml);
+                }
+
+                XmlElement NoviIzdelek = xmlNoviIzdellki.CreateElement("NoviIzdelek");
+
+                void DodajElement(string name, string value)
+                {
+                    var node = xmlNoviIzdellki.CreateElement(name);
+                    node.InnerText = value;
+                    NoviIzdelek.AppendChild(node);
+                }
+
+                DodajElement("Title", titleNode);
+                DodajElement("shifra", shifra);
+                DodajElement("picture", imageNode);
+
+                var obostojoci = xml.SelectSingleNode($"NoviIzdelek[shifra='{shifra}']");
+                if (obostojoci != null)
+                {
+                    obostojoci["Title"].InnerText = titleNode;
+                    obostojoci["picture"].InnerText = imageNode;
+                }
+                else
+                {
+                    xml.AppendChild(NoviIzdelek);
+                }
+
+                xmlNoviIzdellki.Save("NoviIzdellkiXml.xml");
+            }
         }
 
         private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

@@ -23,6 +23,7 @@ namespace DisplayApp
         private bool fadingIn = false;
 
         private List<XElement> izdelek;
+        private List<XElement> izdeleknovi;
         private IzdelkiDisplay izdelkiDisplay;
         private List<string> pasiceFromFolder;
         public MainWindowContent(List<XElement> FromMainWindowXmlload)
@@ -361,7 +362,7 @@ namespace DisplayApp
 
                         var znamkeToDisplay = znamka.VrstaZnamke;
                         string DisplayXName = $"Ekran {pozicija}";
-                        buttonOpen.Click += (sender, e) => PromocijskoOknoOpen(sender, e, znamkeToDisplay, PasiceFromFile, izdelek, DisplayXName);
+                        buttonOpen.Click += (sender, e) => PromocijskoOknoOpen(sender, e, znamkeToDisplay, PasiceFromFile, izdelek, DisplayXName, izdeleknovi);
                         buttonRemoveDisplay.Click += (sender, e) => DeleteDisplay(sender, e, file.Name);
                         buttonNastavitve.Click += (sender, e) => NastavitvePageOpen(sender, e, file.Name, znamka.VrstaZnamke, PasiceFromFile, izdelek, DisplayXName);
                     }
@@ -370,7 +371,7 @@ namespace DisplayApp
             }
         }
 
-        private void PromocijskoOknoOpen(object sender, RoutedEventArgs e, string znamkePassWindow, List<string> pasiceFromFile, List<XElement> XmlLoadData, string DisplayXName)
+        private void PromocijskoOknoOpen(object sender, RoutedEventArgs e, string znamkePassWindow, List<string> pasiceFromFile, List<XElement> XmlLoadData, string DisplayXName, List<XElement>izdeleknovi)
         {
             if(pasiceFromFile.Count() > 0)
             {

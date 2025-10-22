@@ -24,19 +24,26 @@ namespace DisplayApp
     /// </summary>
     public partial class AddDisplayStep1 : Page
     {
+        // Private fields
         private string FileName = string.Empty;
         private List<XElement> izdelek;
+        private List<XElement> Noviizdelek;
         private List<string> pasice;
+        private List<string> allZnamke = new List<string>();
         public AddDisplayStep1(string nameFile, List<XElement> XmlData, List<string> Pasice)
         {
             InitializeComponent();
             pasice = Pasice;
             izdelek = XmlData;
             FileName = nameFile;
-            string[] znamkaListItem = { "Vse znamke", "Bachmann", "Baseus", "Datech", "Digitus", "HiLook", "KELine", "Leviton", "Mikrotik", "SBOX", "Tenda", "TP-Link", "Triton", "UBIQUITI", "White Shark" };
-            foreach(var i  in znamkaListItem)
+            // Znamke
+            string[] znamkaListItem = { "Vse znamke" , "Novi izdelki", "Bachmann", "Baseus", "Datech", "Digitus", "HiLook", "KELine", "Leviton", "Logitech", "Mikrotik", "SBOX", "Tenda", "TP-Link", "Triton", "Teltonika", "UBIQUITI", "White Shark" };
+            // Dodajanje znamk v ListBox
+            foreach (var i  in znamkaListItem)
             {
-                if (i != "Vse znamke")
+                allZnamke.Add(i);
+
+                if (i != "Vse znamke" && i != "Novi izdelki")
                 {
                     ListBoxItem znamkaItem = new ListBoxItem()
                     {
@@ -68,10 +75,12 @@ namespace DisplayApp
 
         private void Next_Click(object sender, RoutedEventArgs e)
         {
+            // Preveri, če je izbrana znamka
             var izbranaZnamka = ZnamkaListBox.SelectedValue as ListBoxItem;
             if (izbranaZnamka != null)
             {
                 string razultatZnamke = izbranaZnamka.Content.ToString();
+                // Navigiraj na naslednji korak z izbrano znamko
                 NavigationService.GetNavigationService(this).Navigate(new AddDisplayStep2(razultatZnamke, FileName, izdelek, pasice));
                 Vodic.Visibility = Visibility.Collapsed;
 
@@ -80,7 +89,39 @@ namespace DisplayApp
 
         private void Zapri_Click(object sender, RoutedEventArgs e)
         {
+            // Zapri in se vrni na glavno okno
             NavigationService.Navigate(new MainWindowContent(izdelek));
+        }
+
+        private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            var placeholder = SearchBox.Template.FindName("Placeholder", SearchBox) as TextBlock;
+            string searchText = SearchBox.Text.Trim().ToLower();
+
+            if(placeholder != null) { 
+                placeholder.Text = null;
+            }
+
+            // Počisti trenutne elemente v ListBoxu
+            ZnamkaListBox.Items.Clear();
+
+            // Filtriraj znamke glede na iskalni niz
+            var filtered = allZnamke.Where(x => x.ToLower().Contains(searchText)).ToList();
+
+            // Dodaj filtrirane znamke nazaj v ListBox
+            foreach (var i in filtered)
+            {
+                var color = (i == "Vse znamke" || i == "Novi izdelki")? (Brush)new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF31E4BF")): Brushes.White;
+
+                ListBoxItem znamkaItem = new ListBoxItem()
+                {
+                    FontSize = 20,
+                    Foreground = color,
+                    Content = i
+                };
+
+                ZnamkaListBox.Items.Add(znamkaItem);
+            }
         }
     }
 }

@@ -23,7 +23,6 @@ namespace DisplayApp
         private bool fadingIn = false;
 
         private List<XElement> izdelek;
-        private List<XElement> izdeleknovi;
         private IzdelkiDisplay izdelkiDisplay;
         private List<string> pasiceFromFolder;
         public MainWindowContent(List<XElement> FromMainWindowXmlload)
@@ -362,7 +361,7 @@ namespace DisplayApp
 
                         var znamkeToDisplay = znamka.VrstaZnamke;
                         string DisplayXName = $"Ekran {pozicija}";
-                        buttonOpen.Click += (sender, e) => PromocijskoOknoOpen(sender, e, znamkeToDisplay, PasiceFromFile, izdelek, DisplayXName, izdeleknovi);
+                        buttonOpen.Click += (sender, e) => PromocijskoOknoOpen(sender, e, znamkeToDisplay, PasiceFromFile, izdelek, DisplayXName);
                         buttonRemoveDisplay.Click += (sender, e) => DeleteDisplay(sender, e, file.Name);
                         buttonNastavitve.Click += (sender, e) => NastavitvePageOpen(sender, e, file.Name, znamka.VrstaZnamke, PasiceFromFile, izdelek, DisplayXName);
                     }
@@ -371,15 +370,23 @@ namespace DisplayApp
             }
         }
 
-        private void PromocijskoOknoOpen(object sender, RoutedEventArgs e, string znamkePassWindow, List<string> pasiceFromFile, List<XElement> XmlLoadData, string DisplayXName, List<XElement>izdeleknovi)
+        private void PromocijskoOknoOpen(object sender, RoutedEventArgs e, string znamkePassWindow, List<string> pasiceFromFile, List<XElement> XmlLoadData, string DisplayXName)
         {
             if(pasiceFromFile.Count() > 0)
             {
                 var path = Properties.Settings.Default.FolderPath;
                 if (Directory.Exists(path))
                 {
-                    izdelkiDisplay = new IzdelkiDisplay(znamkePassWindow, pasiceFromFile, XmlLoadData, DisplayXName);
-                    izdelkiDisplay.Show();
+                    if(znamkePassWindow != "Novi izdelki")
+                    {
+                        izdelkiDisplay = new IzdelkiDisplay(znamkePassWindow, pasiceFromFile, XmlLoadData, DisplayXName);
+                        izdelkiDisplay.Show();
+                    }
+                    else
+                    {
+                        izdelkiDisplay = new IzdelkiDisplay(znamkePassWindow, pasiceFromFile, SkupniPodatki.IzdelekNovo, DisplayXName);
+                        izdelkiDisplay.Show();
+                    }
                 }
                 else
                 {

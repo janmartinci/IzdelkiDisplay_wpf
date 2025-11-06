@@ -1,14 +1,15 @@
-﻿using System.Windows;
+﻿using MaterialDesignThemes.Wpf;
+using System.ComponentModel;
+using System.Globalization;
+using System.IO;
+using System.Text.Json;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Media.Animation;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using System.Xml.Linq;
-using MaterialDesignThemes.Wpf;
-using System.ComponentModel;
-using System.IO;
-using System.Globalization;
 
 namespace DisplayApp
 {
@@ -28,17 +29,19 @@ namespace DisplayApp
         private bool fadingIn = false;
         private string znamkaHolder = string.Empty;
         private List<XElement> izdelek;
-        
+        private string fileName = string.Empty;
+
         //Za Pasice
         private int IndexOfPasice = 0;
         private List<string> pasiceFrFile;
-        public IzdelkiDisplay(string znamka, List<string> pasiceFromFile, List<XElement> XmlLoadData, string DisplayXName)
+        public IzdelkiDisplay(string fileName, string znamka, List<string> pasiceFromFile, List<XElement> XmlLoadData, string DisplayXName)
         {
             InitializeComponent();
             znamkaHolder = znamka;
             pasiceFrFile = pasiceFromFile;
             izdelek = XmlLoadData;
             this.Title = DisplayXName;
+            this.fileName = fileName;
             TimerPasice();
             TimerIzdelki();
 
@@ -47,6 +50,28 @@ namespace DisplayApp
                 Vodic.Visibility = Visibility.Collapsed;
             }
 
+        }
+
+        public void RefreshDisplay()
+        {
+            pasiceFrFile.Clear();
+            timerPasice.Stop();
+            var jsonString = File.ReadAllText($"{fileName}");
+            List<ZnamkeClass> deserializedZnamkeList = JsonSerializer.Deserialize<List<ZnamkeClass>>(jsonString);
+            foreach (var znamka in deserializedZnamkeList)
+            {
+                foreach (var slika in znamka.Slike)
+                {
+                    Uri uri = new Uri(slika);
+                    if (File.Exists(uri.LocalPath))
+                    {
+                        pasiceFrFile.Add(slika);
+                    }
+
+                }
+            }
+            TimerPasice();
+            LoadData(znamkaHolder);
         }
 
         //Error Log

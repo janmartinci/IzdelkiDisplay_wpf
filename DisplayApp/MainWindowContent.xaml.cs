@@ -362,7 +362,7 @@ namespace DisplayApp
 
                         var znamkeToDisplay = znamka.VrstaZnamke;
                         string DisplayXName = $"Ekran {pozicija}";
-                        buttonOpen.Click += (sender, e) => PromocijskoOknoOpen(sender, e, znamkeToDisplay, PasiceFromFile, izdelek, DisplayXName);
+                        buttonOpen.Click += (sender, e) => PromocijskoOknoOpen(sender, e, file.Name, znamkeToDisplay, PasiceFromFile, izdelek, DisplayXName);
                         buttonRemoveDisplay.Click += (sender, e) => DeleteDisplay(sender, e, file.Name);
                         buttonNastavitve.Click += (sender, e) => NastavitvePageOpen(sender, e, file.Name, znamka.VrstaZnamke, PasiceFromFile, izdelek, DisplayXName);
                     }
@@ -371,7 +371,7 @@ namespace DisplayApp
             }
         }
 
-        private void PromocijskoOknoOpen(object sender, RoutedEventArgs e, string znamkePassWindow, List<string> pasiceFromFile, List<XElement> XmlLoadData, string DisplayXName)
+        private void PromocijskoOknoOpen(object sender, RoutedEventArgs e, string fileName, string znamkePassWindow, List<string> pasiceFromFile, List<XElement> XmlLoadData, string DisplayXName)
         {
             if(pasiceFromFile.Count() > 0)
             {
@@ -380,12 +380,11 @@ namespace DisplayApp
                 {
                     if(znamkePassWindow != "Novi izdelki")
                     {
-                        izdelkiDisplay = new IzdelkiDisplay(znamkePassWindow, pasiceFromFile, XmlLoadData, DisplayXName);
-                        izdelkiDisplay.Show();
+                        izdelkiDisplay = new IzdelkiDisplay(fileName, znamkePassWindow, pasiceFromFile, XmlLoadData, DisplayXName);izdelkiDisplay.Show();
                     }
                     else
                     {
-                        izdelkiDisplay = new IzdelkiDisplay(znamkePassWindow, pasiceFromFile, SkupniPodatki.IzdelekNovo, DisplayXName);
+                        izdelkiDisplay = new IzdelkiDisplay(fileName, znamkePassWindow, pasiceFromFile, SkupniPodatki.IzdelekNovo, DisplayXName);
                         izdelkiDisplay.Show();
                     }
                 }

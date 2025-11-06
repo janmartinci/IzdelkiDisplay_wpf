@@ -11,5 +11,7 @@ namespace DisplayApp
     {
         public static List<XElement> Izdelek { get; set; }
         public  static List<XElement> IzdelekNovo { get; set; }
+
+        public static List<string> PasiceIzFolder { get; set; }
     }
 }

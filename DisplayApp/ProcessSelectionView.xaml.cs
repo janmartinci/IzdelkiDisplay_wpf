@@ -12,6 +12,16 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using MaterialDesignThemes.Wpf;
+using Microsoft.Win32;
+using System.ComponentModel;
+using System.IO;
+using System.Text.Json;
+using System.Text.RegularExpressions;
+using System.Windows.Media.Animation;
+using System.Windows.Threading;
+using System.Xml.Linq;
+
 
 namespace DisplayApp
 {
@@ -23,6 +33,25 @@ namespace DisplayApp
         public ProcessSelectionView()
         {
             InitializeComponent();
+        }
+
+        private void Button_Click_Steps(object sender, RoutedEventArgs e)
+        {
+            int i = Properties.Settings.Default.DisplayID;
+
+            while (File.Exists($"display{i}.json"))
+            {
+                i++;
+            }
+
+            Properties.Settings.Default.DisplayID = i + 1;
+            Properties.Settings.Default.Save();
+            NavigationService.GetNavigationService(this).Navigate(new AddDisplayStep1($"display{i}", SkupniPodatki.Izdelek, SkupniPodatki.PasiceIzFolder));
+        }
+
+        private void Button_Click_Custom(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Funkcionalnost še ni na voljo.");
         }
     }
 }

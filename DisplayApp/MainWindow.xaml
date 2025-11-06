@@ -1,4 +1,4 @@
-﻿<!--Verzija aplikacije: 1.5
+﻿<!--Verzija aplikacije: 1.5.5
     Avtor: Jan Martinčič
     -->
 <Window x:Class="DisplayApp.MainWindow"
@@ -15,7 +15,11 @@
         </Grid.LayoutTransform>
         <Border CornerRadius="5" Background="#FF3A3A3A" x:Name="XmlLoadProgressBar">
             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Panel.ZIndex="1">
-                <TextBlock Foreground="White" FontWeight="Bold" Padding="8" Text="Pridobivam podatke iz xml datoteke. Samo trenutek..."/>
+                <TextBlock x:Name="infoLoadingText" Foreground="White" FontWeight="Bold" Padding="8" RenderTransformOrigin="0.5,0.5" Text="Pridobivam podatke iz xml datoteke" HorizontalAlignment="Center">
+                    <TextBlock.RenderTransform>
+                        <ScaleTransform x:Name="textScaleLoading" ScaleX="1" ScaleY="1" CenterX="0.5" CenterY="0.5"/>
+                    </TextBlock.RenderTransform>
+                </TextBlock>
                 <ProgressBar x:Name="LoadingProgressBar" Width="250" Height="10" Margin="5" BorderBrush="{x:Null}"/>
                 <TextBlock x:Name="PercentageText" Padding="0 0 0 5" Foreground="White" Text="0%" FontSize="16" HorizontalAlignment="Center"/>
             </StackPanel>

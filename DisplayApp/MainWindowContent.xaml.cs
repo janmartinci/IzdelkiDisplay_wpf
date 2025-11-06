@@ -24,11 +24,11 @@ namespace DisplayApp
 
         private List<XElement> izdelek;
         private IzdelkiDisplay izdelkiDisplay;
-        private List<string> pasiceFromFolder;
         public MainWindowContent(List<XElement> FromMainWindowXmlload)
         {
             InitializeComponent();
             izdelek = FromMainWindowXmlload;
+            SkupniPodatki.Izdelek = FromMainWindowXmlload;
             FileCheckPasice();
             VodicStatus();
             BGNadzornaPloscaColor();
@@ -68,7 +68,8 @@ namespace DisplayApp
                         .ToArray()
                 );
 
-                pasiceFromFolder = slike.ToList();
+                SkupniPodatki.PasiceIzFolder = slike.ToList();
+
             }
         }
 
@@ -402,7 +403,7 @@ namespace DisplayApp
             var path = Properties.Settings.Default.FolderPath;
             if (Directory.Exists(path))
             {
-                NastavitvePage nastavitvePage = new NastavitvePage(fileName, VrstaZnamke, Pasice, XmlLoadData, DisplayXName, pasiceFromFolder);
+                NastavitvePage nastavitvePage = new NastavitvePage(fileName, VrstaZnamke, Pasice, XmlLoadData, DisplayXName, SkupniPodatki.PasiceIzFolder);
                 NavigationService.GetNavigationService(this).Navigate(nastavitvePage);
             }
             else
@@ -424,16 +425,7 @@ namespace DisplayApp
         private void Dodaj(object sender, RoutedEventArgs e)
         {
 
-            int i = Properties.Settings.Default.DisplayID;
-
-            while (File.Exists($"display{i}.json"))
-            {
-                i++;
-            }
-
-            Properties.Settings.Default.DisplayID = i + 1;
-            Properties.Settings.Default.Save();
-            NavigationService.GetNavigationService(this).Navigate(new AddDisplayStep1($"display{i}", izdelek, pasiceFromFolder));
+            NavigationService.GetNavigationService(this).Navigate(new ProcessSelectionView());
 
             //do
             //{
@@ -1004,6 +996,17 @@ namespace DisplayApp
                 JsonDataLoad();
                 BGNadzornaPloscaColor();
             }
+        }
+
+        private void refreshData(object sender, RoutedEventArgs e)
+        {
+            var mainWindow = Window.GetWindow(this) as MainWindow;
+            mainWindow?.RefreshData();
+        }
+
+        private void VideoOpen(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 

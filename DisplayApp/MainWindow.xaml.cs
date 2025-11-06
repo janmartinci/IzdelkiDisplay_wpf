@@ -9,7 +9,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Xml.Linq;
 using MaterialDesignThemes.Wpf;
-using System.Net.Http;
 using System.Threading.Tasks;
 using HtmlAgilityPack;
 using SQLitePCL;
@@ -21,6 +20,9 @@ using System.Xml;
 using System.Text;
 using System.Security.Cryptography;
 using System.Net;
+using System.Windows.Media.Animation;
+using System.Windows.Threading;
+using System.Threading.Tasks;
 
 namespace DisplayApp
 {
@@ -31,11 +33,83 @@ namespace DisplayApp
     {
         private List<XElement> izdelek;
         private List<XElement> izdelekNovo;
+        // Animations messages
+        private readonly string[] LoadMessages =
+        {
+            "Pridobivam podatke iz XML datoteke...",
+            "Ustvarjam XML za nove artikle...",
+            "Osvežujem prikaz artiklov...",
+            "Pripravljam uporabniški vmesnik...",
+            "Nalaganje konfiguracije zaslona...",
+            "Inicializiram komponente aplikacije...",
+            "Preverjam stanje povezave...",
+            "Usklajujem podatke z oddaljenim virom...",
+            "Optimiziram prikaz promocijskih vsebin...",
+            "Osvežujem predpomnilnik slik...",
+            "Nalaganje slikovnih virov...",
+            "Preverjam različico aplikacije...",
+            "Uvažam promocijske vsebine...",
+            "Pripravljam nadzorno ploščo...",
+            "Čiščenje začasnih podatkov...",
+            "Inicializiram podatkovne tokove...",
+            "Pripravljam animacije prikaza...",
+            "Vse bo kmalu pripravljeno...",
+            "Še malo potrpljenja..."
+        };
+
+        private int currentMessageIndex = 0;
+        private DispatcherTimer messageTimer;
+        private bool isAnimating = false;
+
+        /// Constructor
         public MainWindow()
         {
+            LoadData();
+        }
+
+        public void LoadData()
+        {
             InitializeComponent();
+            StartTextAnimation(LoadMessages);
             XmlLoad();
             prviInstall();
+        }
+
+        public void RefreshData()
+        {
+            infoLoadingText.Text = "Posodabljam podatke...";
+            InitializeComponent();
+            StartTextAnimation(LoadMessages);
+            XmlLoad();
+            prviInstall();
+        }
+
+        private void StartTextAnimation(string[] messages)
+        {
+            messageTimer = new DispatcherTimer {Interval = TimeSpan.FromSeconds(5)};
+            messageTimer.Tick += (s, e) => UpdateLoadingMessage(messages);
+            messageTimer.Start();
+        }
+
+        private void UpdateLoadingMessage(string[] messages)
+        {
+            if (!isAnimating)
+            {
+                isAnimating = true;
+                var fadeOut = new DoubleAnimation(1, 0, TimeSpan.FromMilliseconds(500));
+                fadeOut.Completed += (s, e) =>
+                {
+                    infoLoadingText.Text = messages[currentMessageIndex];
+                    var fadeIn = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(500));
+                    fadeIn.Completed += (s2, e2) =>
+                    {
+                        isAnimating = false;
+                    };
+                    infoLoadingText.BeginAnimation(OpacityProperty, fadeIn);
+                };
+                infoLoadingText.BeginAnimation(OpacityProperty, fadeOut);
+                currentMessageIndex = (currentMessageIndex + 1) % messages.Length;
+            }
         }
 
         public static void prviInstall()
@@ -132,6 +206,7 @@ namespace DisplayApp
                     SkupniPodatki.IzdelekNovo = await NoviIzdelkiXmlAsync("NoviIzdellkiXml.xml");
                     if (izdelekNovo.Count != SkupniPodatki.IzdelekNovo.Count)
                     {
+                        File.Delete("NoviIzdellkiXml.xml");
                         izdelekNovo = xmlNovo.Descendants("item").ToList();
                         await NoviIzdelkiVxml(izdelekNovo);
                     }
@@ -142,7 +217,14 @@ namespace DisplayApp
                         await Task.Delay(30);
                         LoadingProgressBar.Value = i;
                         PercentageText.Text = $"{i}%";
-                    }
+                }
+
+                Dispatcher.Invoke(() =>
+                {
+                    messageTimer?.Stop();
+                    infoLoadingText.Text = "Nalaganje končano";
+
+                });
 
                 XmlLoadProgressBar.Visibility = Visibility.Hidden;
                 Pages.Visibility = Visibility.Visible;

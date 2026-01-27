@@ -41,5 +41,11 @@
     <Setting Name="NadzornaPloscaColor" Type="System.String" Scope="User">
       <Value Profile="(Default)">#ffffff</Value>
     </Setting>
+    <Setting Name="HashPreverjanjeGlavniXml" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="HashPreverjanjeNoviArtikli" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

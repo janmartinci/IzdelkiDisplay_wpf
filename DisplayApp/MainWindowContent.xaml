@@ -240,8 +240,52 @@
                                     </Style>
                                 </Button.Style>
                             </Button>
+                            <Button Foreground="{x:Null}" BorderBrush="{x:Null}" Cursor="Hand" x:Name="video" Click="VideoOpen" Width="40" Height="40" Visibility="Collapsed">
+                                <materialDesign:PackIcon Kind="VideoBox" Foreground="Tomato"/>
+                                <Button.Style>
+                                    <Style TargetType="{x:Type Button}">
+                                        <Setter Property="Background" Value="#FF3A3A3A"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="{x:Type Button}">
+                                                    <Border Background="{TemplateBinding Background}">
+                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Background" Value="#6f6d6d"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
                             <Button Foreground="{x:Null}" BorderBrush="{x:Null}" Cursor="Hand" x:Name="vodic" Click="VodicOpen" Width="40" Height="40">
                                 <materialDesign:PackIcon Kind="QuestionMarkBox" Foreground="LightSkyBlue"/>
+                                <Button.Style>
+                                    <Style TargetType="{x:Type Button}">
+                                        <Setter Property="Background" Value="#FF3A3A3A"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="{x:Type Button}">
+                                                    <Border Background="{TemplateBinding Background}">
+                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Background" Value="#6f6d6d"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                            <Button Foreground="{x:Null}" BorderBrush="{x:Null}" Cursor="Hand" x:Name="refreshFiles" Click="refreshData" Width="40" Height="40" Visibility="Visible">
+                                <materialDesign:PackIcon Kind="RefreshCircle" Foreground="LightGray"/>
                                 <Button.Style>
                                     <Style TargetType="{x:Type Button}">
                                         <Setter Property="Background" Value="#FF3A3A3A"/>

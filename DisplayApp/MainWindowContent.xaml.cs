@@ -23,13 +23,12 @@ namespace DisplayApp
         private bool fadingIn = false;
 
         private List<XElement> izdelek;
-        private List<XElement> izdeleknovi;
         private IzdelkiDisplay izdelkiDisplay;
-        private List<string> pasiceFromFolder;
         public MainWindowContent(List<XElement> FromMainWindowXmlload)
         {
             InitializeComponent();
             izdelek = FromMainWindowXmlload;
+            SkupniPodatki.Izdelek = FromMainWindowXmlload;
             FileCheckPasice();
             VodicStatus();
             BGNadzornaPloscaColor();
@@ -69,7 +68,8 @@ namespace DisplayApp
                         .ToArray()
                 );
 
-                pasiceFromFolder = slike.ToList();
+                SkupniPodatki.PasiceIzFolder = slike.ToList();
+
             }
         }
 
@@ -362,7 +362,7 @@ namespace DisplayApp
 
                         var znamkeToDisplay = znamka.VrstaZnamke;
                         string DisplayXName = $"Ekran {pozicija}";
-                        buttonOpen.Click += (sender, e) => PromocijskoOknoOpen(sender, e, znamkeToDisplay, PasiceFromFile, izdelek, DisplayXName, izdeleknovi);
+                        buttonOpen.Click += (sender, e) => PromocijskoOknoOpen(sender, e, file.Name, znamkeToDisplay, PasiceFromFile, izdelek, DisplayXName);
                         buttonRemoveDisplay.Click += (sender, e) => DeleteDisplay(sender, e, file.Name);
                         buttonNastavitve.Click += (sender, e) => NastavitvePageOpen(sender, e, file.Name, znamka.VrstaZnamke, PasiceFromFile, izdelek, DisplayXName);
                     }
@@ -371,15 +371,22 @@ namespace DisplayApp
             }
         }
 
-        private void PromocijskoOknoOpen(object sender, RoutedEventArgs e, string znamkePassWindow, List<string> pasiceFromFile, List<XElement> XmlLoadData, string DisplayXName, List<XElement>izdeleknovi)
+        private void PromocijskoOknoOpen(object sender, RoutedEventArgs e, string fileName, string znamkePassWindow, List<string> pasiceFromFile, List<XElement> XmlLoadData, string DisplayXName)
         {
             if(pasiceFromFile.Count() > 0)
             {
                 var path = Properties.Settings.Default.FolderPath;
                 if (Directory.Exists(path))
                 {
-                    izdelkiDisplay = new IzdelkiDisplay(znamkePassWindow, pasiceFromFile, XmlLoadData, DisplayXName);
-                    izdelkiDisplay.Show();
+                    if(znamkePassWindow != "Novi izdelki")
+                    {
+                        izdelkiDisplay = new IzdelkiDisplay(fileName, znamkePassWindow, pasiceFromFile, XmlLoadData, DisplayXName);izdelkiDisplay.Show();
+                    }
+                    else
+                    {
+                        izdelkiDisplay = new IzdelkiDisplay(fileName, znamkePassWindow, pasiceFromFile, SkupniPodatki.IzdelekNovo, DisplayXName);
+                        izdelkiDisplay.Show();
+                    }
                 }
                 else
                 {
@@ -395,7 +402,7 @@ namespace DisplayApp
             var path = Properties.Settings.Default.FolderPath;
             if (Directory.Exists(path))
             {
-                NastavitvePage nastavitvePage = new NastavitvePage(fileName, VrstaZnamke, Pasice, XmlLoadData, DisplayXName, pasiceFromFolder);
+                NastavitvePage nastavitvePage = new NastavitvePage(fileName, VrstaZnamke, Pasice, XmlLoadData, DisplayXName, SkupniPodatki.PasiceIzFolder);
                 NavigationService.GetNavigationService(this).Navigate(nastavitvePage);
             }
             else
@@ -417,16 +424,7 @@ namespace DisplayApp
         private void Dodaj(object sender, RoutedEventArgs e)
         {
 
-            int i = Properties.Settings.Default.DisplayID;
-
-            while (File.Exists($"display{i}.json"))
-            {
-                i++;
-            }
-
-            Properties.Settings.Default.DisplayID = i + 1;
-            Properties.Settings.Default.Save();
-            NavigationService.GetNavigationService(this).Navigate(new AddDisplayStep1($"display{i}", izdelek, pasiceFromFolder));
+            NavigationService.GetNavigationService(this).Navigate(new ProcessSelectionView());
 
             //do
             //{
@@ -997,6 +995,17 @@ namespace DisplayApp
                 JsonDataLoad();
                 BGNadzornaPloscaColor();
             }
+        }
+
+        private void refreshData(object sender, RoutedEventArgs e)
+        {
+            var mainWindow = Window.GetWindow(this) as MainWindow;
+            mainWindow?.RefreshData();
+        }
+
+        private void VideoOpen(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 

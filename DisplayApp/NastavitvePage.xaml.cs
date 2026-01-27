@@ -352,8 +352,13 @@ namespace DisplayApp
                 ListTrenutnePasicePointer.Clear();
                 ListTrenutnePasicePointer.AddRange(ListTrenutnePasiceHolder);
                 RefreshPasice?.Invoke(this, EventArgs.Empty);
-
                 NavigationService.Navigate(new MainWindowContent(izdelki));
+                // Refresh IzdelkiDisplay
+                var izdelkiDisplays = Application.Current.Windows.OfType<IzdelkiDisplay>().ToList();
+                foreach (var win in izdelkiDisplays)
+                {
+                    win.RefreshDisplay();
+                }
             }
             else
             {

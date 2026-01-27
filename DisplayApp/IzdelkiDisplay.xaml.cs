@@ -1,14 +1,15 @@
-﻿using System.Windows;
+﻿using MaterialDesignThemes.Wpf;
+using System.ComponentModel;
+using System.Globalization;
+using System.IO;
+using System.Text.Json;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Media.Animation;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using System.Xml.Linq;
-using MaterialDesignThemes.Wpf;
-using System.ComponentModel;
-using System.IO;
-using System.Globalization;
 
 namespace DisplayApp
 {
@@ -28,17 +29,19 @@ namespace DisplayApp
         private bool fadingIn = false;
         private string znamkaHolder = string.Empty;
         private List<XElement> izdelek;
-        
+        private string fileName = string.Empty;
+
         //Za Pasice
         private int IndexOfPasice = 0;
         private List<string> pasiceFrFile;
-        public IzdelkiDisplay(string znamka, List<string> pasiceFromFile, List<XElement> XmlLoadData, string DisplayXName)
+        public IzdelkiDisplay(string fileName, string znamka, List<string> pasiceFromFile, List<XElement> XmlLoadData, string DisplayXName)
         {
             InitializeComponent();
             znamkaHolder = znamka;
             pasiceFrFile = pasiceFromFile;
             izdelek = XmlLoadData;
             this.Title = DisplayXName;
+            this.fileName = fileName;
             TimerPasice();
             TimerIzdelki();
 
@@ -47,6 +50,28 @@ namespace DisplayApp
                 Vodic.Visibility = Visibility.Collapsed;
             }
 
+        }
+
+        public void RefreshDisplay()
+        {
+            pasiceFrFile.Clear();
+            timerPasice.Stop();
+            var jsonString = File.ReadAllText($"{fileName}");
+            List<ZnamkeClass> deserializedZnamkeList = JsonSerializer.Deserialize<List<ZnamkeClass>>(jsonString);
+            foreach (var znamka in deserializedZnamkeList)
+            {
+                foreach (var slika in znamka.Slike)
+                {
+                    Uri uri = new Uri(slika);
+                    if (File.Exists(uri.LocalPath))
+                    {
+                        pasiceFrFile.Add(slika);
+                    }
+
+                }
+            }
+            TimerPasice();
+            LoadData(znamkaHolder);
         }
 
         //Error Log
@@ -187,38 +212,53 @@ namespace DisplayApp
 
             //izbere 5 random izdelkov in shrani v array ter preveri ce je ta artikel ze v arreju
             Random random = new Random();
-            if (znamka != "Vse znamke")
+            if (znamka == "Novi izdelki")
             {
-
                 for (int i = 0; i < 5; i++)
                 {
                     int stRandom = random.Next(steviloArtiklov);
                     do
                     {
                         stRandom = random.Next(steviloArtiklov);
-                    } while (array.Contains(stRandom) || izdelek[stRandom].Element("blagovnaZnamka")?.Value != $"{znamka}" || izdelek[stRandom].Element("zaloga")?.Value == $"0");
+                    } while (array.Contains(stRandom));
                     array[i] = stRandom;
                 }
             }
             else
             {
-                for (int i = 0; i < 5; i++)
+                if (znamka != "Vse znamke")
                 {
-                    int stRandom = random.Next(steviloArtiklov);
-                    do
+
+                    for (int i = 0; i < 5; i++)
                     {
-                        stRandom = random.Next(steviloArtiklov);
-                    } while (array.Contains(stRandom) || izdelek[stRandom].Element("zaloga")?.Value == $"0");
-                    array[i] = stRandom;
+                        int stRandom = random.Next(steviloArtiklov);
+                        do
+                        {
+                            stRandom = random.Next(steviloArtiklov);
+                        } while (array.Contains(stRandom) || izdelek[stRandom].Element("blagovnaZnamka")?.Value != $"{znamka}" || izdelek[stRandom].Element("zaloga")?.Value == $"0");
+                        array[i] = stRandom;
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < 5; i++)
+                    {
+                        int stRandom = random.Next(steviloArtiklov);
+                        do
+                        {
+                            stRandom = random.Next(steviloArtiklov);
+                        } while (array.Contains(stRandom) || izdelek[stRandom].Element("zaloga")?.Value == $"0");
+                        array[i] = stRandom;
+                    }
                 }
             }
+
             return array;
         }
         
         private void LoadData(string znamka)
         {
             mainContainer.Children.Clear();
-
             var arrayData = GetRandomIzdelkeLoad(znamka);
             //izbiše iz arreja 5 izdelkov
             // *** Iterval za display
@@ -227,15 +267,34 @@ namespace DisplayApp
             {
 
                 var InfoIzdelk = izdelek[z];
+                var  id = string.Empty;
+                var ime = string.Empty;
+                var slika = string.Empty;
+                var zaloga = string.Empty;
+                var cenaDDVDecimal = string.Empty;
+                var cenaDDVDecimalText = string.Empty;
+                if (znamkaHolder != "Novi izdelki")
+                {
 
-                var id = InfoIzdelk.Element("izdelekID")?.Value;
-                var ime = InfoIzdelk.Element("izdelekIme")?.Value;
-                var slika = InfoIzdelk.Element("slikaVelika")?.Value;
-                var zaloga = InfoIzdelk.Element("zaloga")?.Value;
-                var ppc = InfoIzdelk.Element("PPC")?.Value;
+                    id = InfoIzdelk.Element("izdelekID")?.Value;
+                    ime = InfoIzdelk.Element("izdelekIme")?.Value;
+                    slika = InfoIzdelk.Element("slikaVelika")?.Value;
+                    zaloga = InfoIzdelk.Element("zaloga")?.Value;
+                    var ppc = InfoIzdelk.Element("PPC")?.Value;
 
-                double cenaDDV = Convert.ToDouble(ppc) + (0.22 * Convert.ToDouble(ppc));
-                var cenaDDVDecimal = cenaDDV.ToString("N2", new CultureInfo("sl-SI"));
+                    double cenaDDV = Convert.ToDouble(ppc) + (0.22 * Convert.ToDouble(ppc));
+                    cenaDDVDecimal = cenaDDV.ToString("N2", new CultureInfo("sl-SI"));
+                    cenaDDVDecimalText = $"{cenaDDVDecimal} € z DDV";
+                }
+                else 
+                {
+                    id = InfoIzdelk.Element("shifra")?.Value;
+                    ime = InfoIzdelk.Element("Title")?.Value;
+                    slika = InfoIzdelk.Element("picture")?.Value;
+                    zaloga = "NOVO";
+                    cenaDDVDecimal = InfoIzdelk.Element("price")?.Value;
+                    cenaDDVDecimalText = $"{cenaDDVDecimal}";
+                }
 
                 //Main stackPanel
                 StackPanel stackPanel = new StackPanel
@@ -297,7 +356,6 @@ namespace DisplayApp
                     Kind = PackIconKind.PackageVariant,
                     VerticalAlignment = VerticalAlignment.Center
                 };
-                wrapPanelKolicina.Children.Add(packIconKol);
 
 
                 TextBlock textBlockKol = new TextBlock
@@ -307,24 +365,35 @@ namespace DisplayApp
                     Margin = new Thickness(5, 0, 0, 0)
                 };
 
-                if (Int32.Parse(zaloga) > 10)
+                if(znamka != "Novi izdelki")
                 {
-                    textBlockKol.Text = "+10";
-                    textBlockKol.Foreground = Brushes.Green;
-                    packIconKol.Foreground = Brushes.Green;
-                }
-                else if ((Int32.Parse(zaloga) is>10 or not 0))
-                {
-                    textBlockKol.Foreground = Brushes.Orange;
-                    packIconKol.Foreground = Brushes.Orange;
+                    wrapPanelKolicina.Children.Add(packIconKol);
+
+                    if (Int32.Parse(zaloga) > 10)
+                    {
+                        textBlockKol.Text = "+10";
+                        textBlockKol.Foreground = Brushes.Green;
+                        packIconKol.Foreground = Brushes.Green;
+                    }
+                    else if ((Int32.Parse(zaloga) is > 10 or not 0))
+                    {
+                        textBlockKol.Foreground = Brushes.Orange;
+                        packIconKol.Foreground = Brushes.Orange;
+                    }
+                    else
+                    {
+                        textBlockKol.Foreground = Brushes.Red;
+                        packIconKol.Foreground = Brushes.Red;
+                    }
+
                 }
                 else
                 {
-                    textBlockKol.Foreground = Brushes.Red;
-                    packIconKol.Foreground = Brushes.Red;
+                    textBlockKol.Foreground = (SolidColorBrush)new BrushConverter().ConvertFromString("#03b0ef");
+                    textBlockKol.FontWeight = FontWeights.SemiBold;
                 }
 
-                wrapPanelKolicina.Children.Add(textBlockKol);
+                    wrapPanelKolicina.Children.Add(textBlockKol);
 
                 gridIdKol.Children.Add(wrapPanelKolicina);
 
@@ -387,7 +456,7 @@ namespace DisplayApp
                     TextWrapping = TextWrapping.Wrap,
                     HorizontalAlignment = HorizontalAlignment.Center,
                     Padding= new Thickness(5),
-                    Text = $"{cenaDDVDecimal} € z DDV"
+                    Text = $"{cenaDDVDecimalText}"
                 };
 
                 cenaGrid.Children.Add(textBlockCena);

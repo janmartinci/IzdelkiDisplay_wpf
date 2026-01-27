@@ -33,7 +33,7 @@ namespace DisplayApp
             pasice = Pasice;
             izdelek = XmlData;
             FileName = nameFile;
-            string[] znamkaListItem = { "Vse znamke", "Bachmann", "Baseus", "Datech", "Digitus", "HiLook", "KELine", "Leviton", "Mikrotik", "SBOX", "Tenda", "TP-Link", "Triton", "UBIQUITI", "White Shark" };
+            string[] znamkaListItem = { "Vse znamke", "Novi", "Bachmann", "Baseus", "Datech", "Digitus", "HiLook", "KELine", "Leviton", "Mikrotik", "SBOX", "Tenda", "TP-Link", "Triton", "UBIQUITI", "White Shark" };
             foreach(var i  in znamkaListItem)
             {
                 if (i != "Vse znamke")
@@ -69,6 +69,7 @@ namespace DisplayApp
         private void Next_Click(object sender, RoutedEventArgs e)
         {
             var izbranaZnamka = ZnamkaListBox.SelectedValue as ListBoxItem;
+            MessageBox.Show(SkupniData.IzdelekNovo[88].Value);
             if (izbranaZnamka != null)
             {
                 string razultatZnamke = izbranaZnamka.Content.ToString();

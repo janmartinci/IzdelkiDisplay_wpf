@@ -187,24 +187,7 @@ namespace DisplayApp
                 }
 
                 xmlNoviIzdellki.Save("NoviIzdellkiXml.xml");
-                SkupniData.IzdelekNovo = await LoadXmlAsync("NoviIzdellkiXml.xml");
             }
-        }
-
-        public async Task<List<XElement>> LoadXmlAsync(string filePath)
-        {
-            using FileStream fs = new FileStream(
-                filePath,
-                FileMode.Open,
-                FileAccess.Read,
-                FileShare.Read,
-                bufferSize: 4096,
-                useAsync: true);
-
-            XDocument xdoc = await XDocument.LoadAsync(fs, LoadOptions.None, default);
-
-            List<XElement> noviIzdelek = new List<XElement>(xdoc.Root.Elements());
-            return noviIzdelek;
         }
 
         private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

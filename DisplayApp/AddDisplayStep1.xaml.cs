@@ -37,7 +37,7 @@ namespace DisplayApp
             izdelek = XmlData;
             FileName = nameFile;
             // Znamke
-            string[] znamkaListItem = { "Vse znamke" , "Novi izdelki", "Bachmann", "Baseus", "Datech", "Digitus", "HiLook", "KELine", "Leviton", "Logitech", "Mikrotik", "SBOX", "Tenda", "TP-Link", "Triton", "Teltonika", "UBIQUITI", "White Shark" };
+            string[] znamkaListItem = { "Vse znamke" , "Novi izdelki", "FNIRSI", "Bachmann", "Baseus", "Datech", "Digitus", "HiLook", "KELine", "Leviton", "Logitech", "Mikrotik", "SBOX", "Tenda", "TP-Link", "Triton", "Teltonika", "UBIQUITI", "White Shark" };
             // Dodajanje znamk v ListBox
             foreach (var i  in znamkaListItem)
             {

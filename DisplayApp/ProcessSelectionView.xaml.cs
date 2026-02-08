@@ -53,5 +53,15 @@ namespace DisplayApp
         {
             MessageBox.Show("Funkcionalnost še ni na voljo.");
         }
+
+        private void oglas_click(object sender, RoutedEventArgs e)
+        {
+            NavigationService.GetNavigationService(this).Navigate(new Oglas());
+        }
+
+        private void video_predvajalnik_click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

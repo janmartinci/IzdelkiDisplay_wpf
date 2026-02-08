@@ -202,5 +202,17 @@ namespace DisplayApp.Properties {
                 this["HashPreverjanjeNoviArtikli"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int OglasID {
+            get {
+                return ((int)(this["OglasID"]));
+            }
+            set {
+                this["OglasID"] = value;
+            }
+        }
     }
 }

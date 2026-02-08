@@ -1,0 +1,16 @@
+﻿<Window x:Class="DisplayApp.OglasDisplay"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DisplayApp"
+        mc:Ignorable="d"
+        Title="OglasDisplay" Height="auto" Width="auto"
+        SizeChanged="Window_SizeChanged" WindowStartupLocation="CenterScreen" WindowStyle="None" ResizeMode="NoResize" MouseLeftButtonDown="Window_MouseLeftButtonDown" KeyDown="Window_KeyDown" MouseDoubleClick="Window_MouseDoubleClick" Loaded="Window_Loaded">
+    <Grid>
+        <Grid.LayoutTransform>
+            <ScaleTransform x:Name="MainScaleTransform"/>
+        </Grid.LayoutTransform>
+        <TextBlock x:Name="textOglasTest" Text="Oglas" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24" FontWeight="Bold"/>
+    </Grid>
+</Window>

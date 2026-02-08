@@ -8,12 +8,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
-        Title="IZDisplay" Height="Auto" Width="Auto" WindowStartupLocation="CenterScreen" WindowStyle="none" ResizeMode="CanResize" Background="{x:Null}" AllowsTransparency="True" MouseLeftButtonDown="Window_MouseLeftButtonDown" SizeChanged="Window_SizeChanged" Loaded="Window_Loaded">
+        Title="IZDisplay" Height="Auto" Width="Auto" WindowStartupLocation="CenterScreen" WindowStyle="ThreeDBorderWindow" ResizeMode="CanResize" Background="{x:Null}" AllowsTransparency="false" MouseLeftButtonDown="Window_MouseLeftButtonDown" SizeChanged="Window_SizeChanged" Loaded="Window_Loaded">
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid.LayoutTransform>
             <ScaleTransform x:Name="MainScaleTransform"/>
         </Grid.LayoutTransform>
-        <Border CornerRadius="5" Background="#FF3A3A3A" x:Name="XmlLoadProgressBar">
+        <Border CornerRadius="0" Background="#FF3A3A3A" x:Name="XmlLoadProgressBar">
             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Panel.ZIndex="1">
                 <TextBlock x:Name="infoLoadingText" Foreground="White" FontWeight="Bold" Padding="8" RenderTransformOrigin="0.5,0.5" Text="Pridobivam podatke iz xml datoteke" HorizontalAlignment="Center">
                     <TextBlock.RenderTransform>
@@ -24,7 +24,7 @@
                 <TextBlock x:Name="PercentageText" Padding="0 0 0 5" Foreground="White" Text="0%" FontSize="16" HorizontalAlignment="Center"/>
             </StackPanel>
         </Border>
-        <materialDesign:Card UniformCornerRadius="15" BorderBrush="{x:Null}">
+        <materialDesign:Card UniformCornerRadius="0" BorderBrush="{x:Null}">
             <Frame x:Name="Pages" Visibility="Hidden" NavigationUIVisibility="Hidden" BorderBrush="{x:Null}"></Frame>
         </materialDesign:Card>
     </Grid>

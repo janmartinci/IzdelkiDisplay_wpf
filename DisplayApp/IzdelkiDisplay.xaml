@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
-        Title="Promocijsko okno" Height="auto" Width="auto" Background="#FFECECEC"
+        Title="Promocijsko okno" Height ="auto" Width="auto" Background="#FFECECEC"
         SizeChanged="Window_SizeChanged" WindowStartupLocation="CenterScreen" WindowStyle="None" ResizeMode="NoResize" MouseLeftButtonDown="Window_MouseLeftButtonDown" KeyDown="Window_KeyDown" Closing="Window_Closing" MouseDoubleClick="Window_MouseDoubleClick" Loaded="Window_Loaded">
     <Window.Resources>
         <Style TargetType="TextBlock">

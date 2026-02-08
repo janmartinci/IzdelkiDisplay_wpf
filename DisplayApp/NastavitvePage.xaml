@@ -7,7 +7,7 @@
         xmlns:gif="https://github.com/XamlAnimatedGif/XamlAnimatedGif"
         xmlns:local="clr-namespace:DisplayApp"
         mc:Ignorable="d"
-        Title="NastavitvePage" Height="500" Width="1000" Background="#FF3A3A3A">
+        Title="NastavitvePage" Background="#FF3A3A3A">
     <Page.Resources>
         <Style x:Key="_ListBoxItemStyle" TargetType="ListBoxItem">
             <Setter Property="Template">

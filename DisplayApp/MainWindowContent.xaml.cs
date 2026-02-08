@@ -2,6 +2,7 @@
 using Microsoft.Win32;
 using System.ComponentModel;
 using System.IO;
+using System.Security.AccessControl;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -128,35 +129,260 @@ namespace DisplayApp
         private void JsonDataLoad()
         {
             var DatotekaPath = Directory.GetCurrentDirectory();
-            var oblikaFile = "display*.json";
+            var oblikaFile = "*.json";
 
             var files = new DirectoryInfo(DatotekaPath)
                 .GetFiles(oblikaFile)
-                .Where(f => Regex.IsMatch(f.Name, @"^display\d+\.json$"))
+                .Where(f => Regex.IsMatch(f.Name, @"^oglas\d+\.json$") || Regex.IsMatch(f.Name, @"^display\d+\.json$"))
                 .OrderBy(f => int.Parse(Regex.Match(f.Name, @"\d+").Value))
                 .ToArray();
 
-            int pozicija = 1;
+            int Dispalypozicija = 1;
+            int OglasPozicija = 1;
             foreach (var file in files)
             {
-                if (File.Exists($"{file.Name}"))
+                if (Regex.IsMatch(file.Name, @"^display\d+\.json$"))
+                {
+
+                    if (File.Exists($"{file.Name}"))
+                    {
+                        var jsonString = File.ReadAllText($"{file.Name}");
+                        List<ZnamkeClass> deserializedZnamkeList = JsonSerializer.Deserialize<List<ZnamkeClass>>(jsonString);
+                        foreach (var znamka in deserializedZnamkeList)
+                        {
+                            int StSlik = 0;
+                            List<string> PasiceFromFile = new List<string>();
+                            foreach (var slika in znamka.Slike)
+                            {
+                                Uri uri = new Uri(slika);
+                                if (File.Exists(uri.LocalPath))
+                                {
+                                    PasiceFromFile.Add(slika);
+                                    StSlik++;
+                                }
+
+                            }
+                            //StackPanel
+                            StackPanel stackPanelDisplay = new StackPanel();
+                            stackPanelDisplay.Width = 200;
+                            stackPanelDisplay.Margin = new Thickness(10);
+                            BorderVodicAnimacija = stackPanelDisplay;
+
+
+
+                            //Title Display
+                            Card cardTile = new Card()
+                            {
+
+                                Background = Brushes.White,
+
+                            };
+
+                            Grid GridCardTitle = new Grid { Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Properties.Settings.Default.HeaderKontrolnoOknoColor)) };
+
+                            TextBlock textBlockTitle = new TextBlock
+                            {
+                                VerticalAlignment = VerticalAlignment.Center,
+                                FontSize = 15,
+                                HorizontalAlignment = HorizontalAlignment.Center,
+                                Padding = new Thickness(5),
+                                FontWeight = FontWeights.SemiBold,
+                                Text = $"Ekran {Dispalypozicija}",
+                                Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Properties.Settings.Default.TextKontrolnoOknoColor))
+
+                            };
+
+                            GridCardTitle.Children.Add(textBlockTitle);
+
+                            Button buttonRemoveDisplay = new Button
+                            {
+                                VerticalAlignment = VerticalAlignment.Top,
+                                HorizontalAlignment = HorizontalAlignment.Right,
+                                Style = (Style)FindResource("CustomRemoveDisplayStyle"),
+                                Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Properties.Settings.Default.HeaderKontrolnoOknoColor))
+                            };
+
+                            PackIcon RemoveDispaly = new PackIcon()
+                            {
+                                Kind = PackIconKind.Times,
+                                VerticalAlignment = VerticalAlignment.Top,
+                                HorizontalAlignment = HorizontalAlignment.Right,
+                                FontWeight = FontWeights.SemiBold,
+                                Height = 15,
+                                Width = 15,
+                                Margin = new Thickness(2),
+                                Foreground = Brushes.Red
+
+                            };
+                            buttonRemoveDisplay.Content = RemoveDispaly;
+                            GridCardTitle.Children.Add(buttonRemoveDisplay);
+                            cardTile.Content = GridCardTitle;
+
+                            //Informacije Display
+                            Card InfoCard = new Card
+                            {
+                                Background = Brushes.White,
+                                Margin = new Thickness(0, 5, 0, 5),
+                            };
+
+                            StackPanel InfoStackPanel = new StackPanel { Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Properties.Settings.Default.BodyKontrolnoOKnoColor)) };
+                            InfoCard.Content = InfoStackPanel;
+
+                            WrapPanel InfoWrapPanel = new WrapPanel();
+                            InfoWrapPanel.VerticalAlignment = VerticalAlignment.Center;
+                            InfoStackPanel.Children.Add(InfoWrapPanel);
+
+                            TextBlock ZnamkaTextBlock = new TextBlock
+                            {
+                                FontSize = 15,
+                                VerticalAlignment = VerticalAlignment.Center,
+                                Padding = new Thickness(5),
+                                Text = znamka.VrstaZnamke,
+                                Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Properties.Settings.Default.TextKontrolnoOknoColor))
+                            };
+                            InfoWrapPanel.Children.Add(ZnamkaTextBlock);
+
+
+                            WrapPanel InfoWrapPanel2 = new WrapPanel();
+                            InfoWrapPanel2.VerticalAlignment = VerticalAlignment.Center;
+                            InfoStackPanel.Children.Add(InfoWrapPanel2);
+
+                            PackIcon InfoImg = new PackIcon()
+                            {
+                                Kind = PackIconKind.Image,
+                                VerticalAlignment = VerticalAlignment.Center,
+                                Height = 25,
+                                Width = 25,
+                                Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Properties.Settings.Default.TextKontrolnoOknoColor))
+
+                            };
+                            InfoWrapPanel2.Children.Add(InfoImg);
+
+                            TextBlock StSlikTextBlock = new TextBlock
+                            {
+                                FontSize = 15,
+                                VerticalAlignment = VerticalAlignment.Center,
+                                Padding = new Thickness(5),
+                                Text = $"{StSlik}",
+                                Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Properties.Settings.Default.TextKontrolnoOknoColor))
+                            };
+                            InfoWrapPanel2.Children.Add(StSlikTextBlock);
+
+                            //Za button
+
+                            var cardButton = new Card
+                            {
+                                BorderBrush = null,
+                                Background = new SolidColorBrush(Color.FromRgb(11, 218, 194)),
+                                HorizontalAlignment = HorizontalAlignment.Center,
+                            };
+
+
+                            var wrapPanel = new WrapPanel();
+
+                            var buttonOpen = new Button
+                            {
+                                Width = 100,
+                                Style = (Style)FindResource("CusttomButtonAdd"),
+                                Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Properties.Settings.Default.ButtonKortrolnoOknoOpenColor)),
+                            };
+
+                            var gridOpenContent = new Grid();
+
+                            var borderOpenButton = new Border
+                            {
+                                BorderThickness = new Thickness(2),
+                                Width = 100,
+                                Height = 30,
+                                CornerRadius = new CornerRadius(5, 5, 5, 5),
+                                BorderBrush = Brushes.Yellow,
+                                Opacity = 0,
+
+                            };
+
+                            var openPackIcon = new PackIcon
+                            {
+                                Kind = PackIconKind.OpenInApp,
+                                VerticalAlignment = VerticalAlignment.Center,
+                                Width = 25,
+                                Height = 25,
+                                VerticalContentAlignment = VerticalAlignment.Center,
+                                HorizontalAlignment = HorizontalAlignment.Center,
+                                Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Properties.Settings.Default.TextKontrolnoOknoColor))
+                            };
+
+                            gridOpenContent.Children.Add(borderOpenButton);
+                            gridOpenContent.Children.Add(openPackIcon);
+
+                            buttonOpen.Content = gridOpenContent;
+
+                            var buttonNastavitve = new Button
+                            {
+                                Width = 100,
+                                Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Properties.Settings.Default.ButtonKontrolnoOknoNastavitveColor)),
+                                Style = (Style)FindResource("CusttomButtonNastaviteve"),
+                            };
+
+                            var gridNastavitve = new Grid();
+
+                            var borderNastavitveButton = new Border
+                            {
+                                BorderThickness = new Thickness(2),
+                                Width = 100,
+                                Height = 30,
+                                CornerRadius = new CornerRadius(5, 5, 5, 5),
+                                BorderBrush = Brushes.Yellow,
+                                Opacity = 0,
+
+                            };
+
+                            var nastavitvePackIcon = new PackIcon
+                            {
+                                Kind = PackIconKind.Settings,
+                                VerticalAlignment = VerticalAlignment.Center,
+                                Width = 25,
+                                Height = 25,
+                                Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Properties.Settings.Default.TextKontrolnoOknoColor)),
+                                VerticalContentAlignment = VerticalAlignment.Center,
+                                HorizontalAlignment = HorizontalAlignment.Center,
+
+                            };
+
+                            gridNastavitve.Children.Add(borderNastavitveButton);
+                            gridNastavitve.Children.Add(nastavitvePackIcon);
+
+                            buttonNastavitve.Content = gridNastavitve;
+
+
+                            wrapPanel.Children.Add(buttonOpen);
+                            wrapPanel.Children.Add(buttonNastavitve);
+
+                            cardButton.Content = wrapPanel;
+
+                            //Dodajanje elementov
+                            stackPanelDisplay.Children.Add(cardTile);
+                            stackPanelDisplay.Children.Add(InfoCard);
+                            stackPanelDisplay.Children.Add(cardButton);
+                            AllDisplays.Children.Add(stackPanelDisplay);
+
+                            var znamkeToDisplay = znamka.VrstaZnamke;
+                            string DisplayXName = $"Ekran {Dispalypozicija}";
+                            buttonOpen.Click += (sender, e) => PromocijskoOknoOpen(sender, e, file.Name, znamkeToDisplay, PasiceFromFile, izdelek, DisplayXName);
+                            buttonRemoveDisplay.Click += (sender, e) => DeleteDisplay(sender, e, file.Name);
+                            buttonNastavitve.Click += (sender, e) => NastavitvePageOpen(sender, e, file.Name, znamka.VrstaZnamke, PasiceFromFile, izdelek, DisplayXName);
+                        }
+                        Dispalypozicija++;
+                    }
+                }
+                else
                 {
                     var jsonString = File.ReadAllText($"{file.Name}");
-                    List<ZnamkeClass> deserializedZnamkeList = JsonSerializer.Deserialize<List<ZnamkeClass>>(jsonString);
-                    foreach (var znamka in deserializedZnamkeList)
+                    List<IzdelekModel> deserializedZnamkeList = JsonSerializer.Deserialize<List<IzdelekModel>>(jsonString);
+                    int steviloIzdelkov = deserializedZnamkeList.Count();
+                    if (File.Exists($"{file.Name}"))
                     {
-                        int StSlik = 0;
-                        List<string> PasiceFromFile = new List<string>();
-                        foreach (var slika in znamka.Slike)
-                        {
-                            Uri uri = new Uri(slika);
-                            if (File.Exists(uri.LocalPath))
-                            {
-                                PasiceFromFile.Add(slika);
-                                StSlik++;
-                            }
 
-                        }
+
                         //StackPanel
                         StackPanel stackPanelDisplay = new StackPanel();
                         stackPanelDisplay.Width = 200;
@@ -182,7 +408,7 @@ namespace DisplayApp
                             HorizontalAlignment = HorizontalAlignment.Center,
                             Padding = new Thickness(5),
                             FontWeight = FontWeights.SemiBold,
-                            Text = $"Ekran {pozicija}",
+                            Text = $"Oglas {OglasPozicija}",
                             Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Properties.Settings.Default.TextKontrolnoOknoColor))
 
                         };
@@ -232,7 +458,7 @@ namespace DisplayApp
                             FontSize = 15,
                             VerticalAlignment = VerticalAlignment.Center,
                             Padding = new Thickness(5),
-                            Text = znamka.VrstaZnamke,
+                            Text = $"Število artiklov {steviloIzdelkov.ToString()}",
                             Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Properties.Settings.Default.TextKontrolnoOknoColor))
                         };
                         InfoWrapPanel.Children.Add(ZnamkaTextBlock);
@@ -242,26 +468,26 @@ namespace DisplayApp
                         InfoWrapPanel2.VerticalAlignment = VerticalAlignment.Center;
                         InfoStackPanel.Children.Add(InfoWrapPanel2);
 
-                        PackIcon InfoImg = new PackIcon()
-                        {
-                            Kind = PackIconKind.Image,
-                            VerticalAlignment = VerticalAlignment.Center,
-                            Height = 25,
-                            Width = 25,
-                            Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Properties.Settings.Default.TextKontrolnoOknoColor))
+                        //PackIcon InfoImg = new PackIcon()
+                        //{
+                        //    Kind = PackIconKind.Tv,
+                        //    VerticalAlignment = VerticalAlignment.Center,
+                        //    Height = 25,
+                        //    Width = 25,
+                        //    Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Properties.Settings.Default.TextKontrolnoOknoColor))s
 
-                        };
-                        InfoWrapPanel2.Children.Add(InfoImg);
+                        //};
+                        //InfoWrapPanel2.Children.Add(InfoImg);
 
-                        TextBlock StSlikTextBlock = new TextBlock
-                        {
-                            FontSize = 15,
-                            VerticalAlignment = VerticalAlignment.Center,
-                            Padding = new Thickness(5),
-                            Text = $"{StSlik}",
-                            Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Properties.Settings.Default.TextKontrolnoOknoColor))
-                        };
-                        InfoWrapPanel2.Children.Add(StSlikTextBlock);
+                        //TextBlock StSlikTextBlock = new TextBlock
+                        //{
+                        //    FontSize = 15,
+                        //    VerticalAlignment = VerticalAlignment.Center,
+                        //    Padding = new Thickness(5),
+                        //    Text = ,
+                        //    Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Properties.Settings.Default.TextKontrolnoOknoColor))
+                        //};
+                        //InfoWrapPanel2.Children.Add(StSlikTextBlock);
 
                         //Za button
 
@@ -282,14 +508,14 @@ namespace DisplayApp
                             Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Properties.Settings.Default.ButtonKortrolnoOknoOpenColor)),
                         };
 
-                        var gridOpenContent = new Grid ( );
+                        var gridOpenContent = new Grid();
 
                         var borderOpenButton = new Border
                         {
                             BorderThickness = new Thickness(2),
                             Width = 100,
                             Height = 30,
-                            CornerRadius = new CornerRadius(5,5,5,5),
+                            CornerRadius = new CornerRadius(5, 5, 5, 5),
                             BorderBrush = Brushes.Yellow,
                             Opacity = 0,
 
@@ -318,7 +544,7 @@ namespace DisplayApp
                             Style = (Style)FindResource("CusttomButtonNastaviteve"),
                         };
 
-                        var gridNastavitve = new Grid ( );
+                        var gridNastavitve = new Grid();
 
                         var borderNastavitveButton = new Border
                         {
@@ -340,7 +566,7 @@ namespace DisplayApp
                             Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Properties.Settings.Default.TextKontrolnoOknoColor)),
                             VerticalContentAlignment = VerticalAlignment.Center,
                             HorizontalAlignment = HorizontalAlignment.Center,
-                            
+
                         };
 
                         gridNastavitve.Children.Add(borderNastavitveButton);
@@ -360,15 +586,17 @@ namespace DisplayApp
                         stackPanelDisplay.Children.Add(cardButton);
                         AllDisplays.Children.Add(stackPanelDisplay);
 
-                        var znamkeToDisplay = znamka.VrstaZnamke;
-                        string DisplayXName = $"Ekran {pozicija}";
-                        buttonOpen.Click += (sender, e) => PromocijskoOknoOpen(sender, e, file.Name, znamkeToDisplay, PasiceFromFile, izdelek, DisplayXName);
                         buttonRemoveDisplay.Click += (sender, e) => DeleteDisplay(sender, e, file.Name);
-                        buttonNastavitve.Click += (sender, e) => NastavitvePageOpen(sender, e, file.Name, znamka.VrstaZnamke, PasiceFromFile, izdelek, DisplayXName);
+                        buttonOpen.Click += (sender, e) => OglasOpen(sender, e, file.Name);
                     }
+                    OglasPozicija++;
                 }
-                pozicija++;
             }
+        }
+
+        private void OglasOpen(object sender, RoutedEventArgs e, string filename)
+        {
+            new OglasDisplay(filename).Show();
         }
 
         private void PromocijskoOknoOpen(object sender, RoutedEventArgs e, string fileName, string znamkePassWindow, List<string> pasiceFromFile, List<XElement> XmlLoadData, string DisplayXName)

@@ -7,59 +7,96 @@
         xmlns:local="clr-namespace:DisplayApp"
         mc:Ignorable="d"
         Title="OglasDisplay" Height="600" Width="1000"
-        SizeChanged="Window_SizeChanged" WindowStartupLocation="CenterScreen" WindowStyle="None" ResizeMode="NoResize" MouseLeftButtonDown="Window_MouseLeftButtonDown" KeyDown="Window_KeyDown" MouseDoubleClick="Window_MouseDoubleClick" Loaded="Window_Loaded">
+        SizeChanged="Window_SizeChanged" FontFamily="/Fonts/#Comfortaa" WindowStartupLocation="CenterScreen" WindowStyle="None" ResizeMode="NoResize" MouseLeftButtonDown="Window_MouseLeftButtonDown" KeyDown="Window_KeyDown" MouseDoubleClick="Window_MouseDoubleClick" Loaded="Window_Loaded">
     <Grid Name="MainGrid">
         <Grid.LayoutTransform>
             <ScaleTransform x:Name="MainScaleTransform"/>
         </Grid.LayoutTransform>
         <Grid.RowDefinitions>
-            <RowDefinition Height="0.5*"/>
+            <RowDefinition Height="0.3*"/>
             <RowDefinition Height="2*"/>
-            <RowDefinition Height="0.5*"/>
+            <RowDefinition Height="0.4*"/>
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0">
-            <materialDesign:Card VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="15 0 0 0" Background="#f4f4f4" Width="970" Height="50" UniformCornerRadius="10">
-                <TextBlock Text="Ime artikla" Foreground="Black" FontSize="30" VerticalAlignment="Center" Margin="10 0 0 0"></TextBlock>
-            </materialDesign:Card>
-        </Grid>
+        <Border Background="#f4f4f4" CornerRadius="10" Margin="10">
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="6*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Border>
+                    <TextBlock x:Name="ImeArtikla" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" Margin="10 0 0 0" Width="500" Foreground="Gray" FontSize="15" VerticalAlignment="Center" HorizontalAlignment="Left"></TextBlock>
+                </Border>
+                <Border Grid.Column = "1">
+                    <Image Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" x:Name="ZnamkeSlike" Stretch="Fill"></Image>
+                </Border>
+            </Grid>
+        </Border>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="1.5*"/>
             </Grid.ColumnDefinitions>
-            <Border Grid.Column="0" Margin="15" Background="#f4f4f4" CornerRadius="10">
-                <StackPanel Margin="10">
-
-                </StackPanel>
-            </Border>
+            <materialDesign:Card  VerticalAlignment="Center" HorizontalAlignment="Center" x:Name="SlikaMain" Background="#f4f4f4" Width="350" Height="350" UniformCornerRadius="10">
+                <Image Margin="0" x:Name="SlikaGlavna" Stretch="Fill"></Image>
+            </materialDesign:Card>
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <Border Grid.Row="0" Margin="15" Background="#f4f4f4" CornerRadius="10">
-                    <TextBlock Text="Opis artiklov" Foreground="Black" FontSize="20"></TextBlock>
-                </Border>
-                <Grid Grid.Row="1">
+                <Grid Grid.Row="0">
+                    <StackPanel>
+                        <Border Margin="15,15,15,10" Background="#f4f4f4" CornerRadius="10" Grid.ColumnSpan="2" Height="180">
+                            <TextBlock x:Name="OpisArtikla" Margin="10" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Foreground="Gray" FontSize="15"></TextBlock>
+                        </Border>
+                        <TextBlock Margin="0 0 0 0" TextWrapping="Wrap" Foreground="Gray" FontSize="13" VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center">Vas zanima ta artikel? <Run FontWeight="Bold">Poskenirajte QR kodo</Run>  ali posredujte šifro artikla prodajalcu.</TextBlock>
+                    </StackPanel>
+                </Grid>
+                <Grid Grid.ColumnSpan="2" Margin="0,222,0,0" Grid.RowSpan="2">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="2*"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <Grid Grid.Column="0" Margin="15" Background="#f4f4f4">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Image Grid.Column="0" Source="https://www.techtrade.si/images/thumbs/0065249_fnirsi-detektor-kablov-kovine-lesa-wd-02.jpeg" Stretch="Fill"></Image>
-                        <Image Grid.Column="1" Source="https://www.techtrade.si/images/thumbs/0065327_fnirsi-detektor-kablov-kovine-lesa-wd-02.jpeg" Stretch="Fill"></Image>
-                    </Grid>
-                    <Border Grid.Column="1" Margin="10" Background="#f4f4f4" CornerRadius="10">
-                        <StackPanel>
-                            <Image x:Name="QRKoda" Stretch="Fill" Height="150"></Image>
-                            <TextBlock Text="1350036" Foreground="Black" FontSize="20" VerticalAlignment="Bottom" HorizontalAlignment="Center"></TextBlock>
-                        </StackPanel>
+                    <Border Grid.Column="0" Background="#f4f4f4" CornerRadius="10" Margin="10">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Image Grid.Column="0" Margin="10" x:Name="SlikaSekundarnaEna"  Stretch="Fill"></Image>
+                            <Image Grid.Column="1" Margin="10"  x:Name="SlikaSekundarnaDva" Stretch="Fill"></Image>
+                        </Grid>
+                    </Border>
+                    <Border Grid.Column="1" Margin="10" CornerRadius="5" Background="#f4f4f4">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="6*"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Border Grid.Row="0" Background="#f4f4f4" Margin="0 0 0 5" CornerRadius="5">
+                                <Image x:Name="QRKoda"></Image>
+                            </Border>
+                            <Border Grid.Row="1" Background="#f4f4f4" Margin="0 0 0 0" CornerRadius="5">
+                                <TextBlock x:Name="IDShifra" Text="Šifra: 1350036" Foreground="Gray" FontSize="18" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
+                            </Border>
+                        </Grid>
                     </Border>
                 </Grid>
+            </Grid>
+        </Grid>
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="974*"/>
+                <ColumnDefinition Width="27*"/>
+            </Grid.ColumnDefinitions>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+                <materialDesign:Card Grid.Column="1" Margin="0 0 50 0" Background="#57b568"  VerticalAlignment="Center" HorizontalAlignment="Center" Width="200" Height="40">
+                    <TextBlock x:Name="CenaArtikla" FontWeight="Bold" Foreground="White" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
+                </materialDesign:Card>
             </Grid>
         </Grid>
     </Grid>

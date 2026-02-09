@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.DirectoryServices;
+using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -31,7 +33,9 @@ using System.Xml;
 using System.Xml.Linq;
 using HtmlAgilityPack;
 using MaterialDesignThemes.Wpf;
+using QRCoder;
 using SQLitePCL;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace DisplayApp
 {
@@ -81,8 +85,51 @@ namespace DisplayApp
             ShowArtikel(ArtikliList[CurrentIndex]);
         }
 
+        public BitmapImage GenerateQrCode(string link)
+        {
+            QRCodeGenerator qrGenerator = new QRCodeGenerator();
+            QRCodeData qrCodeData = qrGenerator.CreateQrCode(link, QRCodeGenerator.ECCLevel.Q);
+            QRCode qrCode = new QRCode(qrCodeData);
+
+            Bitmap qrBitmap = qrCode.GetGraphic(
+                pixelsPerModule: 20,
+                darkColor: System.Drawing.Color.Black,
+                lightColor: System.Drawing.Color.Transparent,
+                drawQuietZones: true
+            );
+
+            using (var memory = new MemoryStream())
+            {
+                qrBitmap.Save(memory, System.Drawing.Imaging.ImageFormat.Png);
+                memory.Position = 0;
+
+
+                BitmapImage bitmapImage = new BitmapImage();
+                bitmapImage.BeginInit();
+                bitmapImage.StreamSource = memory;
+                bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+                bitmapImage.EndInit();
+
+                return bitmapImage;
+            }
+        }
+
         void ShowArtikel(IzdelekModel artikel)
         {
+            ImeArtikla.Text = artikel.IzdelekIme;
+            OpisArtikla.Text = artikel.KratekOpis;
+            CenaArtikla.Text = $"{artikel.Cena} € z DDV";
+            IDShifra.Text = $"Šifra: {artikel.IzdelekID}";
+            SlikaGlavna.Source = new BitmapImage(new Uri(artikel.SlikaVelika));
+            SlikaSekundarnaEna.Source = new BitmapImage(new Uri(artikel.DodatnaSlika1));
+            if(artikel.DodatnaSlika2 != null)
+            {
+                SlikaSekundarnaDva.Source = new BitmapImage(new Uri(artikel.DodatnaSlika2));
+            }
+
+            ZnamkeSlike.Source = new BitmapImage(new Uri($"/Logo/{artikel.BlagovnaZnamka}.png", UriKind.Relative));
+            QRKoda.Source = GenerateQrCode(artikel.QRKoda);
+
 
         }
 

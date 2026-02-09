@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Fonts\Comfortaa-VariableFont_wght.ttf" />
     <None Remove="icon %281%29.png" />
     <None Remove="icon %285%29.png" />
     <None Remove="icon-removebg-preview.png" />
@@ -29,6 +30,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Fonts\Comfortaa-VariableFont_wght.ttf">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Logo\Digitus.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Resources\gifs_dodajanje.gif" />
     <Resource Include="Resources\gifs_pos_izbris.gif" />
     <Resource Include="Resources\gifs_vse_izbris.gif" />
@@ -44,6 +51,7 @@
     <PackageReference Include="MaterialDesignThemes" Version="5.1.0" />
     <PackageReference Include="MaterialDesignThemes.MahApps" Version="3.1.0" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.7" />
+    <PackageReference Include="QRCoder" Version="1.7.0" />
     <PackageReference Include="XamlAnimatedGif" Version="2.3.0" />
   </ItemGroup>
 

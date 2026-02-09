@@ -83,7 +83,7 @@ namespace DisplayApp
 
         void ShowArtikel(IzdelekModel artikel)
         {
-            textOglasTest.Text = $"{artikel.IzdelekIme}";
+
         }
 
         private void Window_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)

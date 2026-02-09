@@ -3,14 +3,64 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:local="clr-namespace:DisplayApp"
         mc:Ignorable="d"
-        Title="OglasDisplay" Height="auto" Width="auto"
+        Title="OglasDisplay" Height="600" Width="1000"
         SizeChanged="Window_SizeChanged" WindowStartupLocation="CenterScreen" WindowStyle="None" ResizeMode="NoResize" MouseLeftButtonDown="Window_MouseLeftButtonDown" KeyDown="Window_KeyDown" MouseDoubleClick="Window_MouseDoubleClick" Loaded="Window_Loaded">
-    <Grid>
+    <Grid Name="MainGrid">
         <Grid.LayoutTransform>
             <ScaleTransform x:Name="MainScaleTransform"/>
         </Grid.LayoutTransform>
-        <TextBlock x:Name="textOglasTest" Text="Oglas" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24" FontWeight="Bold"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.5*"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="0.5*"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <materialDesign:Card VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="15 0 0 0" Background="#f4f4f4" Width="970" Height="50" UniformCornerRadius="10">
+                <TextBlock Text="Ime artikla" Foreground="Black" FontSize="30" VerticalAlignment="Center" Margin="10 0 0 0"></TextBlock>
+            </materialDesign:Card>
+        </Grid>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="1.5*"/>
+            </Grid.ColumnDefinitions>
+            <Border Grid.Column="0" Margin="15" Background="#f4f4f4" CornerRadius="10">
+                <StackPanel Margin="10">
+
+                </StackPanel>
+            </Border>
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Border Grid.Row="0" Margin="15" Background="#f4f4f4" CornerRadius="10">
+                    <TextBlock Text="Opis artiklov" Foreground="Black" FontSize="20"></TextBlock>
+                </Border>
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid Grid.Column="0" Margin="15" Background="#f4f4f4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Image Grid.Column="0" Source="https://www.techtrade.si/images/thumbs/0065249_fnirsi-detektor-kablov-kovine-lesa-wd-02.jpeg" Stretch="Fill"></Image>
+                        <Image Grid.Column="1" Source="https://www.techtrade.si/images/thumbs/0065327_fnirsi-detektor-kablov-kovine-lesa-wd-02.jpeg" Stretch="Fill"></Image>
+                    </Grid>
+                    <Border Grid.Column="1" Margin="10" Background="#f4f4f4" CornerRadius="10">
+                        <StackPanel>
+                            <Image x:Name="QRKoda" Stretch="Fill" Height="150"></Image>
+                            <TextBlock Text="1350036" Foreground="Black" FontSize="20" VerticalAlignment="Bottom" HorizontalAlignment="Center"></TextBlock>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Grid>
+        </Grid>
     </Grid>
 </Window>

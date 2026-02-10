@@ -8,6 +8,8 @@ namespace DisplayApp
 {
     public class IzdelekModel
     {
+
+        public string NameOglas { get; set; }
         public string IzdelekID { get; set; }
         public string IzdelekIme { get; set; }
         public string BlagovnaZnamka { get; set; }
@@ -18,6 +20,7 @@ namespace DisplayApp
         public string DodatnaSlika1 { get; set; } = string.Empty;
         public string DodatnaSlika2 { get; set; } = string.Empty;
         public string Video { get; set; } = string.Empty;
+        public bool PasicaNovo { get; set; }
 
 
 

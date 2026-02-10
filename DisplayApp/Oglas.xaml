@@ -47,7 +47,7 @@
                                     </Style>
                                 </TextBox.Style>
                             </TextBox>
-                            <Grid Background="#FF3A3A3A" Height="128">
+                            <Grid Background="#FF3A3A3A" Height="165">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="9*"/>
                                     <ColumnDefinition Width="Auto"/>
@@ -57,19 +57,20 @@
 
                                 </ListBox>
                             </Grid>
-                            <Grid Height="220">
+                            <Grid>
                                 <StackPanel>
-                                    <StackPanel Orientation="Horizontal">
-                                        <TextBlock VerticalAlignment="Center" Foreground="White" FontWeight="Bold" FontSize="14" Margin="10" Text="Izbrano: "/>
-                                        <TextBox x:Name="izbrani_artikel" IsReadOnly="True" VerticalAlignment="Center" Foreground="White" CaretBrush="White">
-                                            <TextBox.Style>
-                                                <Style TargetType="TextBox">
-                                                    <Setter Property="Template">
-                                                        <Setter.Value>
-                                                            <ControlTemplate TargetType="TextBox">
-                                                                <Grid>
-                                                                    <ScrollViewer x:Name="PART_ContentHost"/>
-                                                                    <TextBlock x:Name="Placeholder"
+                                    <Border BorderBrush="White" BorderThickness="0 0.5 0 0">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock VerticalAlignment="Center" Foreground="White" FontWeight="Bold" FontSize="14" Margin="10" Text="Izbrano: "/>
+                                            <TextBox x:Name="izbrani_artikel" IsReadOnly="True" VerticalAlignment="Center" Foreground="White" CaretBrush="White">
+                                                <TextBox.Style>
+                                                    <Style TargetType="TextBox">
+                                                        <Setter Property="Template">
+                                                            <Setter.Value>
+                                                                <ControlTemplate TargetType="TextBox">
+                                                                    <Grid>
+                                                                        <ScrollViewer x:Name="PART_ContentHost"/>
+                                                                        <TextBlock x:Name="Placeholder"
                                                                    Text=""
                                                                    Foreground="White"
                                                                    Margin="0,0,0,0"
@@ -77,15 +78,16 @@
                                                                    IsHitTestVisible="False"
                                                                    Width="180"
                                                                    />
-                                                                </Grid>
-                                                            </ControlTemplate>
-                                                        </Setter.Value>
-                                                    </Setter>
-                                                </Style>
-                                            </TextBox.Style>
-                                        </TextBox>
-                                    </StackPanel>
-                                    <Border>
+                                                                    </Grid>
+                                                                </ControlTemplate>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </Style>
+                                                </TextBox.Style>
+                                            </TextBox>
+                                        </StackPanel>
+                                    </Border>
+                                    <Border BorderBrush="White" BorderThickness="0 0 0 0.5" Margin="0 0 0 8">
                                         <StackPanel Orientation="Horizontal">
                                             <TextBlock VerticalAlignment="Center" Foreground="White" FontWeight="Bold" FontSize="14" Margin="10" Text="Šifra artikla:"/>
                                             <TextBox x:Name="shifra_artikla" IsReadOnly="True" VerticalAlignment="Center" Foreground="White" CaretBrush="White">
@@ -113,7 +115,7 @@
                                             </TextBox>
                                         </StackPanel>
                                     </Border>
-                                    <TextBlock x:Name="QRKoda" VerticalAlignment="Center" Foreground="White" FontWeight="Bold" FontSize="14" Margin="10" Text="QR Koda:"></TextBlock>
+                                    <TextBlock x:Name="QRKoda" VerticalAlignment="Center" Foreground="White" FontWeight="Bold" FontSize="14" Margin="10 0 10 10" Text="QR Koda:"></TextBlock>
                                     <TextBox x:Name="qr_koda" VerticalAlignment="Center" Margin="10 0 10 0" Foreground="White" CaretBrush="White" TextChanged="qr_koda_TextChanged">
                                         <TextBox.Style>
                                             <Style TargetType="TextBox">
@@ -139,8 +141,9 @@
                                         </TextBox.Style>
                                     </TextBox>
                                     <CheckBox x:Name="CenaArtiklaCheckBox" Content="Prikaži ceno" Margin="10" Foreground="White" Visibility="Collapsed"/>
-                                    <CheckBox x:Name="Dodaj_video" Content="Dodaj video" Margin="10" Foreground="White"/>
-                                    <TextBox x:Name="Video_url" VerticalAlignment="Center" Margin="10 0 10 0" Foreground="White" CaretBrush="White" TextChanged="Video_url_TextChanged">
+                                    <CheckBox x:Name="PasicaNovo" Content="Pasica novo" Margin="10" Foreground="White" Visibility="Visible"/>
+                                    <CheckBox x:Name="Dodaj_video" Content="Dodaj video" Margin="10" Foreground="White" Visibility="Collapsed"/>
+                                    <TextBox x:Name="Video_url" VerticalAlignment="Center" Margin="10 0 10 0" Foreground="White" CaretBrush="White" TextChanged="Video_url_TextChanged" Visibility="Hidden">
                                         <TextBox.Style>
                                             <Style TargetType="TextBox">
                                                 <Setter Property="Template">
@@ -216,8 +219,81 @@
                 <Grid Grid.Column="1">
                     <materialDesign:Card Height="480" Margin="0 0 10 0" x:Name="izbraniPanel" Background="White" Visibility="Visible" Panel.ZIndex="0">
                         <StackPanel>
-                            <ListBox Margin="5,5,5,5" Height="440" BorderBrush="{x:Null}" ItemsSource="{Binding ItemsView}" x:Name="IzbraniArtikliListBox" Background="Transparent" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" Grid.ColumnSpan="3" SelectionChanged="ArtikliListBox_SelectionChanged">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 10 0 0">
+                                <TextBlock VerticalAlignment="Center" Foreground="Black" FontWeight="Bold" FontSize="14" Margin="10 10 0 10" Visibility="Collapsed" Text="Ime oglasa: "/>
+                                <Border x:Name="BorderCustomIme" BorderBrush="Gray" BorderThickness="1" Height="25" >
+                                    <TextBox x:Name="CustomIme" IsReadOnly="False" VerticalAlignment="Center" Foreground="Black" CaretBrush="Gray" TextChanged="CustomIme_TextChanged" >
+                                        <TextBox.Style>
+                                            <Style TargetType="TextBox">
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="TextBox">
+                                                            <Grid>
+                                                                <ScrollViewer x:Name="PART_ContentHost"/>
+                                                                <TextBlock x:Name="Placeholder"
+                                                                   Text="Vnesi ime oglasa..."
+                                                                   Foreground="Gray"
+                                                                   Margin="2,0,0,0"
+                                                                   VerticalAlignment="Center"
+                                                                   IsHitTestVisible="False"
+                                                                   Width="300"
+                                                                   />
+                                                            </Grid>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </TextBox.Style>
+                                    </TextBox>
+                                </Border>
+                            </StackPanel>
+                            <ListBox
+                                x:Name="IzbraniArtikliListBox"
+                                ItemsSource="{Binding ItemsView}"
+                                Margin="5"
+                                Height="400"
+                                Background="Transparent"
+                                BorderBrush="{x:Null}"
+                                ScrollViewer.VerticalScrollBarVisibility="Auto">
 
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="2*" />
+                                                <ColumnDefinition Width="3*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <!-- Item content -->
+                                            <TextBlock
+                                                Grid.Column="0"
+                                                Text="{Binding IzdelekID}"
+                                                VerticalAlignment="Center"
+                                                TextWrapping="Wrap" />
+                                            <TextBlock
+                                                Grid.Column="1"
+                                                Margin="5 0 0 0"
+                                                Text="{Binding IzdelekIme}"
+                                                VerticalAlignment="Center"
+                                                TextWrapping="Wrap" />
+                                            
+                                            <!-- Remove button -->
+                                            <Button
+                                                Grid.Column="2"
+                                                Content="✕"
+                                                Margin="10,0,0,0"
+                                                Padding="6,2"
+                                                Background="Transparent"
+                                                Foreground="Red"
+                                                BorderBrush="{x:Null}"
+                                                Cursor="Hand"
+                                                Command="{Binding DataContext.RemoveItemCommand,
+                                                                  RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                                CommandParameter="{Binding}" Click="Button_Click_1" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
                             </ListBox>
                             <Button Content="Shrani" Width="100" Height="25" x:Name="Shrani_Gumb" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0 0 0 0" Click="Shrani_Gumb_Click">
                                 <Button.Style>

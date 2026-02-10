@@ -205,6 +205,7 @@ namespace DisplayApp
             CenaArtikla.Text = $"{artikel.Cena} € z DDV";
             IDShifra.Text = $"Šifra: {artikel.IzdelekID}";
             IDShifraa.Text = $"Šifra: {artikel.IzdelekID}";
+            if(artikel.PasicaNovo == true) { PasicaNovo.Visibility = Visibility.Visible; } else { PasicaNovo.Visibility = Visibility.Collapsed; }
             SlikaGlavna.Source = ImageCache.Get(artikel.SlikaVelika);
 
             if (artikel.DodatnaSlika2 != null || artikel.DodatnaSlika2 != null)

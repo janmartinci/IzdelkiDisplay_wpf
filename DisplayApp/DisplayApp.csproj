@@ -21,6 +21,7 @@
     <None Remove="icon__4_-removebg-preview.png" />
     <None Remove="icon__6_-removebg-preview.png" />
     <None Remove="Izdelek brez naslova.png" />
+    <None Remove="Logo\FNIRSI.png" />
     <None Remove="Resources\gifs_dodajanje.gif" />
     <None Remove="Resources\gifs_pos_izbris.gif" />
     <None Remove="Resources\gifs_vse_izbris.gif" />
@@ -34,6 +35,9 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Logo\Digitus.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Logo\FNIRSI.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\gifs_dodajanje.gif" />

@@ -381,6 +381,7 @@ namespace DisplayApp
                     int steviloIzdelkov = deserializedZnamkeList.Count();
                     if (File.Exists($"{file.Name}"))
                     {
+                        var ImeOglasa = deserializedZnamkeList[0].NameOglas;
 
 
                         //StackPanel
@@ -408,7 +409,7 @@ namespace DisplayApp
                             HorizontalAlignment = HorizontalAlignment.Center,
                             Padding = new Thickness(5),
                             FontWeight = FontWeights.SemiBold,
-                            Text = $"Oglas {OglasPozicija}",
+                            Text = $"{ImeOglasa}",
                             Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Properties.Settings.Default.TextKontrolnoOknoColor))
 
                         };

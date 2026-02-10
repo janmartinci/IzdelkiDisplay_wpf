@@ -6,7 +6,7 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:local="clr-namespace:DisplayApp"
         mc:Ignorable="d"
-        Title="OglasDisplay" Height="auto" Width="auto"
+        Title="OglasDisplay" Height="600" Width="1000"
         SizeChanged="Window_SizeChanged" FontFamily="/Fonts/#Comfortaa" WindowStartupLocation="CenterScreen" WindowStyle="None" ResizeMode="NoResize" MouseLeftButtonDown="Window_MouseLeftButtonDown" KeyDown="Window_KeyDown" MouseDoubleClick="Window_MouseDoubleClick" Loaded="Window_Loaded">
     <Grid x:Name="MainGrid" Opacity="1">
         <Grid.LayoutTransform>
@@ -24,7 +24,12 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Border>
-                    <TextBlock x:Name="ImeArtikla" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" Margin="10 0 0 0" Width="500" Foreground="Gray" FontSize="15" VerticalAlignment="Center" HorizontalAlignment="Left"></TextBlock>
+                    <StackPanel Orientation="Horizontal">
+                        <Border x:Name="PasicaNovo" VerticalAlignment="Center" Margin="4" HorizontalAlignment="Center" Background="#039347" CornerRadius="5" Height="25" Visibility="Collapsed">
+                            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5" Foreground="White" FontWeight="Bold" >NOVO</TextBlock>
+                        </Border>
+                        <TextBlock x:Name="ImeArtikla" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" Margin="10 0 0 0" Width="500" Foreground="Gray" FontSize="15" VerticalAlignment="Center" HorizontalAlignment="Left"></TextBlock>
+                    </StackPanel>
                 </Border>
                 <Border Grid.Column = "1">
                     <Image Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" x:Name="ZnamkeSlike" Stretch="Fill"></Image>
@@ -58,20 +63,22 @@
                         <ColumnDefinition Width="0.5*"/>
                     </Grid.ColumnDefinitions>
                     <Border Background="#f4f4f4" CornerRadius="10" Margin="10">
-                        <TextBlock Margin="0 0 0 0" Width="400" TextWrapping="Wrap" Foreground="Gray" FontSize="13" VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center">Vas zanima ta artikel? <Run FontWeight="Bold">Poskenirajte QR kodo</Run>  ali posredujte šifro artikla prodajalcu.</TextBlock>
+                        <TextBlock Margin= " 0 0 0 0 " Width="350" TextWrapping="Wrap" Foreground="Gray" FontSize="13" VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center">Vas zanima ta artikel? <Run FontWeight="Bold">Poskenirajte QR kodo</Run>  ali posredujte šifro artikla prodajalcu.</TextBlock>
                     </Border>
-                    <Grid Grid.Column="1" Background="#f4f4f4" Margin="10">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="6*"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-                        <Border Grid.Row="0" Background="#f4f4f4" Margin="0 0 0 5" CornerRadius="5">
-                            <Image x:Name="QRKodaaa"></Image>
-                        </Border>
-                        <Border Grid.Row="1" Background="#f4f4f4" Margin="0 0 0 5" CornerRadius="5">
-                            <TextBlock x:Name="IDShifraaa" Text="Šifra: 1350036" Foreground="Gray" FontSize="18" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
-                        </Border>
-                    </Grid>
+                    <Border Grid.Column="1" Margin="10" Background="#f4f4f4" CornerRadius="5">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="6*"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Border Grid.Row="0" Background="#f4f4f4" Margin="0 0 0 5" CornerRadius="5">
+                                <Image x:Name="QRKodaaa"></Image>
+                            </Border>
+                            <Border Grid.Row="1" Background="#f4f4f4" Margin="0 0 0 5" CornerRadius="5">
+                                <TextBlock x:Name="IDShifraaa" Text="Šifra: 1350036" Foreground="Gray" FontSize="18" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
+                            </Border>
+                        </Grid>
+                    </Border>
                 </Grid>
                 <Grid Grid.Row="2" Margin="10" Visibility="Collapsed" x:Name="EnaSlikaGrid">
                     <Grid.ColumnDefinitions>

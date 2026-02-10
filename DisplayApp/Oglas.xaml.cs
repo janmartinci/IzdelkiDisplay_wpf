@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.DirectoryServices;
 using System.Globalization;
@@ -45,7 +46,8 @@ namespace DisplayApp
         private List<IzdelekModel> _allIzdelki = new();
         public List<IzdelekModel> FilteredIzdelki { get; set; } = new();
 
-        public List<IzdelekModel> izbraniIzdelki { get; set; } = new();
+        ObservableCollection<IzdelekModel> izbraniIzdelki = new ObservableCollection<IzdelekModel>();
+
 
         public Oglas()
         {
@@ -175,8 +177,8 @@ namespace DisplayApp
 
         private void ArtikliListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            shifra_artikla.Text = FilteredIzdelki.ElementAtOrDefault(ArtikliListBox.SelectedIndex)?.IzdelekID ?? string.Empty;
             izbrani_artikel.Text = FilteredIzdelki.ElementAtOrDefault(ArtikliListBox.SelectedIndex)?.IzdelekIme ?? string.Empty;
+            shifra_artikla.Text = FilteredIzdelki.ElementAtOrDefault(ArtikliListBox.SelectedIndex)?.IzdelekID ?? string.Empty;
             KratekOpisTextBox.Document.Blocks.Clear();
             KratekOpisTextBox.Document.Blocks.Add(new Paragraph(new Run(FilteredIzdelki.ElementAtOrDefault(ArtikliListBox.SelectedIndex)?.KratekOpis ?? string.Empty)));
 
@@ -188,7 +190,9 @@ namespace DisplayApp
             // Preveri, ali je izdelek že v seznamu izbranih izdelkov. Če ni, ga doda; če je, prikaže sporočilo.
             if (!izbraniIzdelki.Any(i => i.IzdelekID == shifra_artikla.Text))
             {
-                
+
+                bool pasicaNovo = false;
+
                 if(qr_koda.Text == "")
                 {
                     MessageBox.Show("Vnesite URL za QR kodo");
@@ -210,6 +214,12 @@ namespace DisplayApp
                     return;
                 }
 
+
+                if(PasicaNovo.IsChecked == true)
+                {
+                    pasicaNovo = true;
+                }
+
                 var cenaDDVDecimalText = string.Empty;
 
                 var cena = FilteredIzdelki.ElementAtOrDefault(ArtikliListBox.SelectedIndex)?.Cena;
@@ -227,7 +237,8 @@ namespace DisplayApp
                         QRKoda = qr_koda.Text,
                         Cena = cenaDDVDecimalText,
                         SlikaVelika = FilteredIzdelki.ElementAtOrDefault(ArtikliListBox.SelectedIndex)?.SlikaVelika,
-                        Video = Video_url.Text
+                        Video = Video_url.Text,
+                        PasicaNovo = pasicaNovo,
 
                     });
                 }
@@ -244,6 +255,7 @@ namespace DisplayApp
                         SlikaVelika = FilteredIzdelki.ElementAtOrDefault(ArtikliListBox.SelectedIndex)?.SlikaVelika,
                         DodatnaSlika1 = FilteredIzdelki.ElementAtOrDefault(ArtikliListBox.SelectedIndex)?.DodatnaSlika1,
                         DodatnaSlika2 = FilteredIzdelki.ElementAtOrDefault(ArtikliListBox.SelectedIndex)?.DodatnaSlika2,
+                        PasicaNovo = pasicaNovo,
 
 
                     });
@@ -257,29 +269,56 @@ namespace DisplayApp
             }
 
 
-                IzbraniArtikliListBox.ItemsSource = null;
-            IzbraniArtikliListBox.ItemsSource = izbraniIzdelki.Select(i => $"{i.IzdelekID}, {i.IzdelekIme}").ToList();
+            IzbraniArtikliListBox.ItemsSource = null;
+            IzbraniArtikliListBox.ItemsSource = izbraniIzdelki;
         }
 
+        // Ta metoda se sproži, ko uporabnik klikne na gumb za shranjevanje. Preveri, ali je ime datoteke že zasedeno, ali je vneseno ime prazno, in ali so izbrani artikli. Če so vsi pogoji izpolnjeni, shrani podatke v JSON datoteko in navigira nazaj na glavno stran.
         private void Shrani_Gumb_Click(object sender, RoutedEventArgs e)
         {
-            int i = Properties.Settings.Default.OglasID;
-            while (File.Exists($"oglas{i}.json")){
-                i++;
-            }
-            Properties.Settings.Default.OglasID = i + 1;
-            Properties.Settings.Default.Save();
-            SaveJson($"oglas{i}");
-            MessageBox.Show("Podatki so bili shranjeni");
-            IzbraniArtikliListBox.ClearValue(ItemsControl.ItemsSourceProperty);
-            NavigationService.Navigate(new MainWindowContent(SkupniPodatki.Izdelek));
 
+            int i = Properties.Settings.Default.OglasID;
+
+                if (CustomIme.Text != "")
+                {
+                    //Preveri če je artikel izbran če ni opozori z messageboxom da izbere artikel.
+                    if (IzbraniArtikliListBox.Items.Count == 0)
+                    {
+                        MessageBox.Show("Izberi artikle");
+                    }
+                    else
+                    {
+                        while (File.Exists($"oglas{i}.json"))
+                        {
+                            i++;
+                        }
+                        Properties.Settings.Default.OglasID = i + 1;
+                        Properties.Settings.Default.Save();
+                        SaveJson($"oglas{i}");
+                        MessageBox.Show("Podatki so bili shranjeni");
+                        IzbraniArtikliListBox.ClearValue(ItemsControl.ItemsSourceProperty);
+                        NavigationService.Navigate(new MainWindowContent(SkupniPodatki.Izdelek));
+                        return;
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Vnesite ime oglasa.");
+                    BorderCustomIme.BorderBrush = Brushes.Red;
+
+                    return;
+                }
         }
 
         private async void SaveJson(string FileNameData)
         {
             try
             {
+                string nameOglas = CustomIme.Text;
+                foreach (var item in izbraniIzdelki)
+                {
+                    item.NameOglas = nameOglas;
+                }
                 var nastavitveJson = new JsonSerializerOptions { WriteIndented = true };
                 string jsonString = JsonSerializer.Serialize(izbraniIzdelki, nastavitveJson);
                 File.WriteAllText($"{FileNameData}.json", jsonString);
@@ -304,6 +343,31 @@ namespace DisplayApp
             else
             {
                znamkaComboBox.IsDropDownOpen = false;
+            }
+        }
+
+        private void CustomIme_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            var placeholder = CustomIme.Template.FindName("Placeholder", CustomIme) as TextBlock;
+
+            if (placeholder != null)
+            {
+                placeholder.Text = null;
+            }
+        }
+
+        private void IzbraniArtikliListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.DataContext is IzdelekModel item)
+            {
+                izbraniIzdelki.Remove(item);
+                IzbraniArtikliListBox.ItemsSource = izbraniIzdelki;
+
             }
         }
     }

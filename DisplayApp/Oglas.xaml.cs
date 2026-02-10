@@ -203,15 +203,18 @@ namespace DisplayApp
                         return;
                     }
                 }
+                //Preveri če je artikel izbran če ni opozori z messageboxom da izbere artikel.
+                if(ArtikliListBox.SelectedItems.Count <= 0)
+                {
+                    MessageBox.Show("Izberite artikel iz seznama");
+                    return;
+                }
 
                 var cenaDDVDecimalText = string.Empty;
 
-                if (CenaArtiklaCheckBox.IsChecked == true)
-                {
-                   var cena = FilteredIzdelki.ElementAtOrDefault(ArtikliListBox.SelectedIndex)?.Cena;
-                   double cenaDDV = Convert.ToDouble(cena) + (0.22 * Convert.ToDouble(cena));
-                   cenaDDVDecimalText = cenaDDV.ToString("N2", new CultureInfo("sl-SI"));
-                }
+                var cena = FilteredIzdelki.ElementAtOrDefault(ArtikliListBox.SelectedIndex)?.Cena;
+                double cenaDDV = Convert.ToDouble(cena) + (0.22 * Convert.ToDouble(cena));
+                cenaDDVDecimalText = cenaDDV.ToString("N2", new CultureInfo("sl-SI"));
 
                 if (Dodaj_video.IsChecked == true)
                 {
@@ -288,6 +291,19 @@ namespace DisplayApp
                 {
                     MessageBox.Show($"Napaka pri shranjevanju: {ex.Message}");
                 }).Task.ConfigureAwait(false);
+            }
+        }
+
+        private void znamkaComboBox_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            //open combo box on click
+            if (!znamkaComboBox.IsDropDownOpen)
+            {
+                znamkaComboBox.IsDropDownOpen = true;
+            }
+            else
+            {
+               znamkaComboBox.IsDropDownOpen = false;
             }
         }
     }

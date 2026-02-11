@@ -91,41 +91,41 @@ namespace DisplayApp
                 bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
                 bitmapImage.EndInit();
 
+                bitmapImage.Freeze();
+
                 return bitmapImage;
             }
         }
 
-        void StartRotation()
+        async void StartRotation()
         {
             InitAnimations();
-            ShowArtikel(ArtikliList[CurrentIndex]);
+            await ShowArtikelAsync(ArtikliList[CurrentIndex]);
 
             timer.Interval = TimeSpan.FromSeconds(30);
             timer.Tick += Timer_Tick;
             timer.Start();
 
-            ShowArtikelAnimated(ArtikliList[CurrentIndex]);
+            ShowArtikelAnimatedAsync(ArtikliList[CurrentIndex]);
         }
 
-        void Timer_Tick(object sender, EventArgs e)
+
+        async void Timer_Tick(object sender, EventArgs e)
         {
             CurrentIndex++;
 
             if (CurrentIndex >= ArtikliList.Count)
-            {
                 CurrentIndex = 0;
-            }
 
             if (ArtikliList.Count > 1)
-            {
-                ShowArtikelAnimated(ArtikliList[CurrentIndex]);
-            }
+                ShowArtikelAnimatedAsync(ArtikliList[CurrentIndex]);
             else
             {
-                ShowArtikel(ArtikliList[CurrentIndex]);
+                await ShowArtikelAsync(ArtikliList[CurrentIndex]);
                 timer.Stop();
             }
         }
+
 
         private Storyboard FadeOut;
         private Storyboard FadeIn;
@@ -159,16 +159,17 @@ namespace DisplayApp
             FadeIn.Children.Add(fadeInAnim);
         }
 
-        void ShowArtikelAnimated(IzdelekModel artikel)
+        async void ShowArtikelAnimatedAsync(IzdelekModel artikel)
         {
-            FadeOut.Completed += (s, e) =>
+            FadeOut.Completed += async (s, e) =>
             {
-                ShowArtikel(artikel);
+                await ShowArtikelAsync(artikel);
                 FadeIn.Begin();
             };
 
             FadeOut.Begin();
         }
+
 
         public static class ImageCache
         {
@@ -182,51 +183,70 @@ namespace DisplayApp
 
                 return _cache.GetOrAdd(uri, key =>
                 {
-                    var bitmap = new BitmapImage();
+                    using (var client = new WebClient())
+                    {
+                        byte[] data = client.DownloadData(key);
 
-                    bitmap.BeginInit();
-                    bitmap.UriSource = new Uri(key, UriKind.RelativeOrAbsolute);
-                    bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                    bitmap.CreateOptions = BitmapCreateOptions.None;
-                    bitmap.EndInit();
+                        using (var ms = new MemoryStream(data))
+                        {
+                            var bitmap = new BitmapImage();
+                            bitmap.BeginInit();
+                            bitmap.StreamSource = ms;
+                            bitmap.CacheOption = BitmapCacheOption.OnLoad; // fully decode
+                            bitmap.EndInit();
+                            bitmap.Freeze(); // now it works
 
-                    if (bitmap.CanFreeze)
-                        bitmap.Freeze();
-
-                    return bitmap;
+                            return bitmap;
+                        }
+                    }
                 });
             }
         }
 
-        void ShowArtikel(IzdelekModel artikel)
+
+
+        async Task ShowArtikelAsync(IzdelekModel artikel)
         {
+            // Background work
+            var qr1 = Task.Run(() => GenerateQrCode(artikel.QRKoda));
+            var qr2 = Task.Run(() => GenerateQrCode(artikel.QRKoda));
+            var qr3 = Task.Run(() => GenerateQrCode(artikel.QRKoda));
+
+            var mainImg = Task.Run(() => ImageCache.Get(artikel.SlikaVelika));
+            var dodatna1 = Task.Run(() => ImageCache.Get(artikel.DodatnaSlika1));
+            var dodatna2 = Task.Run(() => ImageCache.Get(artikel.DodatnaSlika2));
+
+            await Task.WhenAll(qr1, qr2, qr3, mainImg, dodatna1, dodatna2);
+
+            // UI updates (same as before)
             ImeArtikla.Text = artikel.IzdelekIme;
             OpisArtikla.Text = artikel.KratekOpis;
             CenaArtikla.Text = $"{artikel.Cena} € z DDV";
             IDShifra.Text = $"Šifra: {artikel.IzdelekID}";
             IDShifraa.Text = $"Šifra: {artikel.IzdelekID}";
-            if(artikel.PasicaNovo == true) { PasicaNovo.Visibility = Visibility.Visible; } else { PasicaNovo.Visibility = Visibility.Collapsed; }
-            SlikaGlavna.Source = ImageCache.Get(artikel.SlikaVelika);
+            PasicaNovo.Visibility = artikel.PasicaNovo ? Visibility.Visible : Visibility.Collapsed;
 
-            if (artikel.DodatnaSlika2 != null || artikel.DodatnaSlika2 != null)
+            SlikaGlavna.Source = mainImg.Result;
+
+            if (artikel.DodatnaSlika1 != null || artikel.DodatnaSlika2 != null)
             {
                 if (artikel.DodatnaSlika1 != null)
                 {
-                    SlikaSekundarnaEna.Source = ImageCache.Get(artikel.DodatnaSlika1);
-                    SlikaSekundarnaEnaa.Source = ImageCache.Get(artikel.DodatnaSlika1);
+                    SlikaSekundarnaEna.Source = dodatna1.Result;
+                    SlikaSekundarnaEnaa.Source = dodatna1.Result;
                     EnaSlikaGrid.Visibility = Visibility.Collapsed;
                     DveSlikeGrid.Visibility = Visibility.Visible;
                 }
                 else
                 {
-
                     EnaSlikaGrid.Visibility = Visibility.Visible;
                     DveSlikeGrid.Visibility = Visibility.Collapsed;
                 }
+
                 if (artikel.DodatnaSlika2 != null)
                 {
-                    SlikaSekundarnaDva.Source = ImageCache.Get(artikel.DodatnaSlika2);
-                    SlikaSekundarnaEnaa.Source = ImageCache.Get(artikel.DodatnaSlika2);
+                    SlikaSekundarnaDva.Source = dodatna2.Result;
+                    SlikaSekundarnaEnaa.Source = dodatna2.Result;
                     EnaSlikaGrid.Visibility = Visibility.Collapsed;
                     DveSlikeGrid.Visibility = Visibility.Visible;
                 }
@@ -247,12 +267,12 @@ namespace DisplayApp
             }
 
             ZnamkeSlike.Source = new BitmapImage(new Uri($"/Logo/{artikel.BlagovnaZnamka}.png", UriKind.Relative));
-            QRKoda.Source = GenerateQrCode(artikel.QRKoda);
-            QRKodaa.Source = GenerateQrCode(artikel.QRKoda);
-            QRKodaaa.Source = GenerateQrCode(artikel.QRKoda);
 
-
+            QRKoda.Source = qr1.Result;
+            QRKodaa.Source = qr2.Result;
+            QRKodaaa.Source = qr3.Result;
         }
+
 
         private void Window_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {

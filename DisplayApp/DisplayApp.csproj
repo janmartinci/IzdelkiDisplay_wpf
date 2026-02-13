@@ -21,7 +21,18 @@
     <None Remove="icon__4_-removebg-preview.png" />
     <None Remove="icon__6_-removebg-preview.png" />
     <None Remove="Izdelek brez naslova.png" />
+    <None Remove="Logo\Arzopa.png" />
+    <None Remove="Logo\Baseus.png" />
+    <None Remove="Logo\Delock.png" />
     <None Remove="Logo\FNIRSI.png" />
+    <None Remove="Logo\GMKtec.png" />
+    <None Remove="Logo\HiLook.png" />
+    <None Remove="Logo\Leviton.png" />
+    <None Remove="Logo\Logitech.png" />
+    <None Remove="Logo\Mikrotik.png" />
+    <None Remove="Logo\Tenda.png" />
+    <None Remove="Logo\Triton.png" />
+    <None Remove="Logo\UBIQUITI.png" />
     <None Remove="Resources\gifs_dodajanje.gif" />
     <None Remove="Resources\gifs_pos_izbris.gif" />
     <None Remove="Resources\gifs_vse_izbris.gif" />
@@ -34,10 +45,46 @@
     <Resource Include="Fonts\Comfortaa-VariableFont_wght.ttf">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Logo\Arzopa.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Logo\Baseus.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Logo\Delock.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Logo\Digitus.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Logo\EZVIZ.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Logo\FNIRSI.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Logo\GMKtec.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Logo\HiLook.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Logo\Leviton.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Logo\Logitech.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Logo\Mikrotik.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Logo\Tenda.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Logo\Triton.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Logo\UBIQUITI.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\gifs_dodajanje.gif" />

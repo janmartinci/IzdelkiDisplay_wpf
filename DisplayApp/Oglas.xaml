@@ -20,10 +20,31 @@
                     <materialDesign:Card Background="#FF3A3A3A" Width="300" Height="480" UniformCornerRadius="10">
                         <StackPanel>
                             <ComboBox x:Name="znamkaComboBox" IsEditable="True" IsReadOnly="True" Text="Izberi znamko" materialDesign:HintAssist.Hint="Select an Oglas" Margin="10" FontSize="16" Foreground="Black" Background="#FF2D2D2D" SelectionChanged="znamkaComboBox_SelectionChanged" MouseDown="znamkaComboBox_MouseLeftButtonDown">
-                                <ComboBoxItem Content="Digitus"/>
-                                <ComboBoxItem Content="Delock"/>
                                 <ComboBoxItem Content="Apacer"/>
+                                <ComboBoxItem Content="Arzopa"/>
+                                <ComboBoxItem Content="Aten"/>
+                                <ComboBoxItem Content="Bachmann"/>
+                                <ComboBoxItem Content="Baseus"/>
+                                <ComboBoxItem Content="Datech"/>
+                                <ComboBoxItem Content="Delock"/>
+                                <ComboBoxItem Content="Digitus"/>
+                                <ComboBoxItem Content="EZVIZ"/>
                                 <ComboBoxItem Content="FNIRSI"/>
+                                <ComboBoxItem Content="GMKtec"/>
+                                <ComboBoxItem Content="HiLook"/>
+                                <ComboBoxItem Content="Joyroom"/>
+                                <ComboBoxItem Content="KELine"/>
+                                <ComboBoxItem Content="Leviton"/>
+                                <ComboBoxItem Content="Logitech"/>
+                                <ComboBoxItem Content="Mikrotik"/>
+                                <ComboBoxItem Content="SBOX"/>
+                                <ComboBoxItem Content="Teltonika"/>
+                                <ComboBoxItem Content="Tenda"/>
+                                <ComboBoxItem Content="TP-Link"/>
+                                <ComboBoxItem Content="Triton"/>
+                                <ComboBoxItem Content="Tecnoware"/>
+                                <ComboBoxItem Content="UBIQUITI"/>
+                                <ComboBoxItem Content="White Shark"/>
                             </ComboBox>
                             <TextBox x:Name="SearchBox" VerticalAlignment="Center" Margin="10 0 10 0" Foreground="White" CaretBrush="White" TextChanged="SearchBox_TextChanged">
                                 <TextBox.Style>

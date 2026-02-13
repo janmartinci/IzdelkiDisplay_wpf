@@ -37,6 +37,7 @@ using MaterialDesignThemes.Wpf;
 using QRCoder;
 using SQLitePCL;
 using static System.Net.Mime.MediaTypeNames;
+using Path = System.IO.Path;
 
 namespace DisplayApp
 {
@@ -60,7 +61,15 @@ namespace DisplayApp
                 if (deserializedArtikliList != null)
                 {
                     ArtikliList = deserializedArtikliList;
-                    StartRotation();
+                    if(deserializedArtikliList.Count > 1)
+                    {
+                        StartRotation();
+                        _ = ShowArtikelAsync(ArtikliList[CurrentIndex]);
+                    }
+                    else
+                    {
+                        _ = ShowArtikelAsync(ArtikliList[0]);
+                    }
                 }
             }
         }
@@ -106,25 +115,25 @@ namespace DisplayApp
             timer.Tick += Timer_Tick;
             timer.Start();
 
-            ShowArtikelAnimatedAsync(ArtikliList[CurrentIndex]);
+            await ShowArtikelAnimatedAsync(ArtikliList[CurrentIndex]);
         }
 
-
-        async void Timer_Tick(object sender, EventArgs e)
+        private bool _isAnimating = false;
+        private async void Timer_Tick(object sender, EventArgs e)
         {
-            CurrentIndex++;
+            if (_isAnimating) return;
 
+            _isAnimating = true;
+
+            CurrentIndex++;
             if (CurrentIndex >= ArtikliList.Count)
                 CurrentIndex = 0;
 
-            if (ArtikliList.Count > 1)
-                ShowArtikelAnimatedAsync(ArtikliList[CurrentIndex]);
-            else
-            {
-                await ShowArtikelAsync(ArtikliList[CurrentIndex]);
-                timer.Stop();
-            }
+            await ShowArtikelAnimatedAsync(ArtikliList[CurrentIndex]);
+
+            _isAnimating = false;
         }
+
 
 
         private Storyboard FadeOut;
@@ -159,16 +168,26 @@ namespace DisplayApp
             FadeIn.Children.Add(fadeInAnim);
         }
 
-        async void ShowArtikelAnimatedAsync(IzdelekModel artikel)
-        {
-            FadeOut.Completed += async (s, e) =>
-            {
-                await ShowArtikelAsync(artikel);
-                FadeIn.Begin();
-            };
 
+        private async Task ShowArtikelAnimatedAsync(IzdelekModel artikel)
+        {
+            var tcs = new TaskCompletionSource<bool>();
+
+            void handler(object s, EventArgs e)
+            {
+                FadeOut.Completed -= handler;
+                tcs.SetResult(true);
+            }
+
+            FadeOut.Completed += handler;
             FadeOut.Begin();
+
+            await tcs.Task;              // wait fade out
+            await ShowArtikelAsync(artikel);
+
+            FadeIn.Begin();
         }
+
 
 
         public static class ImageCache
@@ -208,15 +227,19 @@ namespace DisplayApp
         async Task ShowArtikelAsync(IzdelekModel artikel)
         {
             // Background work
-            var qr1 = Task.Run(() => GenerateQrCode(artikel.QRKoda));
-            var qr2 = Task.Run(() => GenerateQrCode(artikel.QRKoda));
-            var qr3 = Task.Run(() => GenerateQrCode(artikel.QRKoda));
+            var qrTask = Task.Run(() => GenerateQrCode(artikel.QRKoda));
+            await qrTask;
+            var qr = qrTask.Result;
+
+            QRKoda.Source = qr;
+            QRKodaa.Source = qr;
+            QRKodaaa.Source = qr;
 
             var mainImg = Task.Run(() => ImageCache.Get(artikel.SlikaVelika));
             var dodatna1 = Task.Run(() => ImageCache.Get(artikel.DodatnaSlika1));
             var dodatna2 = Task.Run(() => ImageCache.Get(artikel.DodatnaSlika2));
 
-            await Task.WhenAll(qr1, qr2, qr3, mainImg, dodatna1, dodatna2);
+            await Task.WhenAll(qrTask, mainImg, dodatna1, dodatna2);
 
             // UI updates (same as before)
             ImeArtikla.Text = artikel.IzdelekIme;
@@ -266,11 +289,42 @@ namespace DisplayApp
                 ZanimanjeText.Visibility = Visibility.Collapsed;
             }
 
-            ZnamkeSlike.Source = new BitmapImage(new Uri($"/Logo/{artikel.BlagovnaZnamka}.png", UriKind.Relative));
 
-            QRKoda.Source = qr1.Result;
-            QRKodaa.Source = qr2.Result;
-            QRKodaaa.Source = qr3.Result;
+            string[] ZnamkeKiImajoLogo =
+            {
+                "Arzopa.png",
+                "Baseus.png",
+                "Delock.png",
+                "Digitus.png",
+                "EZVIZ.png",
+                "FNIRSI.png",
+                "GMKtec.png",
+                "HiLook.png",
+                "Leviton.png",
+                "Logitech.png",
+                "Mikrotik.png",
+                "SBOX.png",
+                "Tenda.png",
+                "Triton.png",
+                "UBIQUITI.png"
+            };
+
+            if (ZnamkeKiImajoLogo.Contains($"{artikel.BlagovnaZnamka}.png"))
+            {
+                ZnamkeSlike.Source = new BitmapImage(new Uri($"/Logo/{artikel.BlagovnaZnamka}.png", UriKind.Relative));
+                ZnamkeSlikee.Source = new BitmapImage(new Uri($"/Logo/{artikel.BlagovnaZnamka}.png", UriKind.Relative));
+                CardZnamkeSlikee.Visibility = Visibility.Visible;
+                ZnamkeSlikee.Visibility = Visibility.Visible;
+                ZnamkeSlike.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                CardZnamkeSlikee.Visibility = Visibility.Collapsed;
+                ZnamkeSlikee.Visibility = Visibility.Collapsed;
+                ZnamkeSlike.Visibility = Visibility.Hidden;
+            }
+            
+
         }
 
 

@@ -51,6 +51,10 @@ namespace DisplayApp
         int CurrentIndex = 0;
         DispatcherTimer timer = new DispatcherTimer();
         List<IzdelekModel> ArtikliList = new List<IzdelekModel>();
+
+        // Image cache instance
+        private readonly ImageCache _imageCache = new ImageCache();
+
         public OglasDisplay(string fileName)
         {
             InitializeComponent();
@@ -121,17 +125,28 @@ namespace DisplayApp
         private bool _isAnimating = false;
         private async void Timer_Tick(object sender, EventArgs e)
         {
-            if (_isAnimating) return;
+            // Guard the timer callback so exceptions don't crash the app
+            try
+            {
+                if (_isAnimating) return;
 
-            _isAnimating = true;
+                _isAnimating = true;
 
-            CurrentIndex++;
-            if (CurrentIndex >= ArtikliList.Count)
-                CurrentIndex = 0;
+                CurrentIndex++;
+                if (CurrentIndex >= ArtikliList.Count)
+                    CurrentIndex = 0;
 
-            await ShowArtikelAnimatedAsync(ArtikliList[CurrentIndex]);
-
-            _isAnimating = false;
+                await ShowArtikelAnimatedAsync(ArtikliList[CurrentIndex]);
+            }
+            catch (Exception ex)
+            {
+                // Log and continue; do not let exception propagate to dispatcher
+                ErrorLogger.LogException(ex, "Timer_Tick");
+            }
+            finally
+            {
+                _isAnimating = false;
+            }
         }
 
 
@@ -190,141 +205,254 @@ namespace DisplayApp
 
 
 
-        public static class ImageCache
+        private class ImageCache
         {
-            private static readonly ConcurrentDictionary<string, BitmapImage> _cache
-                = new ConcurrentDictionary<string, BitmapImage>();
+            private readonly ConcurrentDictionary<string, BitmapImage> _cache = new();
+            private static readonly HttpClient _http = new HttpClient();
 
-            public static BitmapImage Get(string uri)
+            public async Task<BitmapImage> GetAsync(string uri)
             {
                 if (string.IsNullOrWhiteSpace(uri))
                     return null;
 
-                return _cache.GetOrAdd(uri, key =>
+                try
                 {
-                    using (var client = new WebClient())
+                        if (_cache.TryGetValue(uri, out var cached) && cached != null)
+                        return cached;
+
+                    var downloaded = await DownloadAndCacheAsync(uri);
+                    if (downloaded != null)
+                        _cache[uri] = downloaded;
+
+                    return downloaded;
+                }
+                catch (Exception ex)
+                {
+                    ErrorLogger.LogException(ex, "ImageCache.GetAsync");
+                    return null;
+                }
+            }
+
+            private async Task<BitmapImage> DownloadAndCacheAsync(string uri)
+            {
+                try
+                {
+                    // relative (non-absolute) -> treat as file path
+                    if (Uri.TryCreate(uri, UriKind.RelativeOrAbsolute, out var parsed) && !parsed.IsAbsoluteUri)
                     {
-                        byte[] data = client.DownloadData(key);
-
-                        using (var ms = new MemoryStream(data))
+                        string localPath = Path.GetFullPath(uri);
+                        if (File.Exists(localPath))
                         {
-                            var bitmap = new BitmapImage();
-                            bitmap.BeginInit();
-                            bitmap.StreamSource = ms;
-                            bitmap.CacheOption = BitmapCacheOption.OnLoad; // fully decode
-                            bitmap.EndInit();
-                            bitmap.Freeze(); // now it works
-
-                            return bitmap;
+                            var bmp = LoadBitmapFromFile(localPath);
+                            if (bmp != null) _cache[uri] = bmp;
+                            return bmp;
                         }
                     }
-                });
+
+                    // file:// URI
+                    if (Uri.TryCreate(uri, UriKind.Absolute, out parsed) && parsed.IsFile)
+                    {
+                        var localPath = parsed.LocalPath;
+                        if (File.Exists(localPath))
+                        {
+                            var bmp = LoadBitmapFromFile(localPath);
+                            if (bmp != null) _cache[uri] = bmp;
+                            return bmp;
+                        }
+                    }
+
+                    // HTTP/HTTPS
+                    if (Uri.TryCreate(uri, UriKind.Absolute, out parsed) &&
+                        (parsed.Scheme == Uri.UriSchemeHttp || parsed.Scheme == Uri.UriSchemeHttps))
+                    {
+                        using var resp = await _http.GetAsync(parsed);
+                        if (!resp.IsSuccessStatusCode)
+                        {
+                            ErrorLogger.LogException(new WebException($"HTTP {(int)resp.StatusCode} {resp.ReasonPhrase} for {uri}"), "ImageCache.HttpGet");
+                            return null;
+                        }
+
+                        var bytes = await resp.Content.ReadAsByteArrayAsync();
+                        using var ms = new MemoryStream(bytes);
+                        var bmp = new BitmapImage();
+                        bmp.BeginInit();
+                        bmp.CacheOption = BitmapCacheOption.OnLoad;
+                        bmp.StreamSource = ms;
+                        bmp.EndInit();
+                        bmp.Freeze();
+
+                        _cache[uri] = bmp;
+                        return bmp;
+                    }
+
+                    // fallback: try as file path
+                    if (File.Exists(uri))
+                    {
+                        var bmp = LoadBitmapFromFile(uri);
+                        if (bmp != null) _cache[uri] = bmp;
+                        return bmp;
+                    }
+
+                    return null;
+                }
+                catch (HttpRequestException hre)
+                {
+                    ErrorLogger.LogException(hre, "ImageCache.DownloadAndCacheAsync");
+                    return null;
+                }
+                catch (WebException we)
+                {
+                    ErrorLogger.LogException(we, "ImageCache.DownloadAndCacheAsync");
+                    return null;
+                }
+                catch (Exception ex)
+                {
+                    ErrorLogger.LogException(ex, "ImageCache.DownloadAndCacheAsync");
+                    return null;
+                }
+            }
+
+            private BitmapImage LoadBitmapFromFile(string path)
+            {
+                try
+                {
+                    using var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+                    var bmp = new BitmapImage();
+                    bmp.BeginInit();
+                    bmp.CacheOption = BitmapCacheOption.OnLoad;
+                    bmp.StreamSource = fs;
+                    bmp.EndInit();
+                    bmp.Freeze();
+                    return bmp;
+                }
+                catch (Exception ex)
+                {
+                    ErrorLogger.LogException(ex, "ImageCache.LoadBitmapFromFile");
+                    return null;
+                }
             }
         }
 
 
 
-        async Task ShowArtikelAsync(IzdelekModel artikel)
+        public async Task ShowArtikelAsync(IzdelekModel artikel)
         {
-            // Background work
-            var qrTask = Task.Run(() => GenerateQrCode(artikel.QRKoda));
-            await qrTask;
-            var qr = qrTask.Result;
+            if (artikel == null) return;
 
-            QRKoda.Source = qr;
-            QRKodaa.Source = qr;
-            QRKodaaa.Source = qr;
-
-            var mainImg = Task.Run(() => ImageCache.Get(artikel.SlikaVelika));
-            var dodatna1 = Task.Run(() => ImageCache.Get(artikel.DodatnaSlika1));
-            var dodatna2 = Task.Run(() => ImageCache.Get(artikel.DodatnaSlika2));
-
-            await Task.WhenAll(qrTask, mainImg, dodatna1, dodatna2);
-
-            // UI updates (same as before)
-            ImeArtikla.Text = artikel.IzdelekIme;
-            OpisArtikla.Text = artikel.KratekOpis;
-            CenaArtikla.Text = $"{artikel.Cena} € z DDV";
-            IDShifra.Text = $"Šifra: {artikel.IzdelekID}";
-            IDShifraa.Text = $"Šifra: {artikel.IzdelekID}";
-            PasicaNovo.Visibility = artikel.PasicaNovo ? Visibility.Visible : Visibility.Collapsed;
-
-            SlikaGlavna.Source = mainImg.Result;
-
-            if (artikel.DodatnaSlika1 != null || artikel.DodatnaSlika2 != null)
+            try
             {
-                if (artikel.DodatnaSlika1 != null)
+                // Background work
+                var qrTask = Task.Run(() => GenerateQrCode(artikel.QRKoda));
+
+                var mainImgTask = _imageCache.GetAsync(artikel.SlikaVelika);
+                var dodatna1Task = _imageCache.GetAsync(artikel.DodatnaSlika1);
+                var dodatna2Task = _imageCache.GetAsync(artikel.DodatnaSlika2);
+
+                await Task.WhenAll(qrTask, mainImgTask, dodatna1Task, dodatna2Task);
+
+                var qr = qrTask.Result;
+                QRKoda.Source = qr;
+                QRKodaa.Source = qr;
+                QRKodaaa.Source = qr;
+
+                // UI updates (same as before)
+                ImeArtikla.Text = artikel.IzdelekIme;
+                OpisArtikla.Text = artikel.KratekOpis;
+                CenaArtikla.Text = $"{artikel.Cena} € z DDV";
+                IDShifra.Text = $"Šifra: {artikel.IzdelekID}";
+                IDShifraa.Text = $"Šifra: {artikel.IzdelekID}";
+                PasicaNovo.Visibility = artikel.PasicaNovo ? Visibility.Visible : Visibility.Collapsed;
+
+                // Apply images safely (use null checks and placeholders)
+                var mainBmp = await mainImgTask;
+                SlikaGlavna.Source = mainBmp ?? null; // set to null or a placeholder image
+
+                var bmpD1 = await dodatna1Task;
+                var bmpD2 = await dodatna2Task;
+
+                bool hasD1 = bmpD1 != null && !string.IsNullOrWhiteSpace(artikel.DodatnaSlika1);
+                bool hasD2 = bmpD2 != null && !string.IsNullOrWhiteSpace(artikel.DodatnaSlika2);
+
+                if (hasD1 || hasD2)
                 {
-                    SlikaSekundarnaEna.Source = dodatna1.Result;
-                    SlikaSekundarnaEnaa.Source = dodatna1.Result;
-                    EnaSlikaGrid.Visibility = Visibility.Collapsed;
-                    DveSlikeGrid.Visibility = Visibility.Visible;
+                    if (hasD1)
+                    {
+                        SlikaSekundarnaEna.Source = bmpD1;
+                        SlikaSekundarnaEnaa.Source = bmpD1;
+                        EnaSlikaGrid.Visibility = Visibility.Collapsed;
+                        DveSlikeGrid.Visibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        EnaSlikaGrid.Visibility = Visibility.Visible;
+                        DveSlikeGrid.Visibility = Visibility.Collapsed;
+                    }
+
+                    if (hasD2)
+                    {
+                        SlikaSekundarnaDva.Source = bmpD2;
+                        SlikaSekundarnaEnaa.Source = bmpD2;
+                        EnaSlikaGrid.Visibility = Visibility.Collapsed;
+                        DveSlikeGrid.Visibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        EnaSlikaGrid.Visibility = Visibility.Visible;
+                        DveSlikeGrid.Visibility = Visibility.Collapsed;
+                    }
+
+                    SlikaMainGrid.Visibility = Visibility.Collapsed;
                 }
                 else
                 {
-                    EnaSlikaGrid.Visibility = Visibility.Visible;
+                    EnaSlikaGrid.Visibility = Visibility.Collapsed;
                     DveSlikeGrid.Visibility = Visibility.Collapsed;
+                    SlikaMainGrid.Visibility = Visibility.Visible;
+                    ZanimanjeText.Visibility = Visibility.Collapsed;
                 }
 
-                if (artikel.DodatnaSlika2 != null)
+
+                string[] ZnamkeKiImajoLogo =
                 {
-                    SlikaSekundarnaDva.Source = dodatna2.Result;
-                    SlikaSekundarnaEnaa.Source = dodatna2.Result;
-                    EnaSlikaGrid.Visibility = Visibility.Collapsed;
-                    DveSlikeGrid.Visibility = Visibility.Visible;
+                    "Arzopa.png",
+                    "Baseus.png",
+                    "Delock.png",
+                    "Digitus.png",
+                    "EZVIZ.png",
+                    "FNIRSI.png",
+                    "GMKtec.png",
+                    "HiLook.png",
+                    "Leviton.png",
+                    "Logitech.png",
+                    "Mikrotik.png",
+                    "SBOX.png",
+                    "Tenda.png",
+                    "Triton.png",
+                    "UBIQUITI.png"
+                };
+
+                if (ZnamkeKiImajoLogo.Contains($"{artikel.BlagovnaZnamka}.png"))
+                {
+                    ZnamkeSlike.Source = new BitmapImage(new Uri($"/Logo/{artikel.BlagovnaZnamka}.png", UriKind.Relative));
+                    ZnamkeSlikee.Source = new BitmapImage(new Uri($"/Logo/{artikel.BlagovnaZnamka}.png", UriKind.Relative));
+                    CardZnamkeSlikee.Visibility = Visibility.Visible;
+                    ZnamkeSlikee.Visibility = Visibility.Visible;
+                    ZnamkeSlike.Visibility = Visibility.Visible;
                 }
                 else
                 {
-                    EnaSlikaGrid.Visibility = Visibility.Visible;
-                    DveSlikeGrid.Visibility = Visibility.Collapsed;
+                    CardZnamkeSlikee.Visibility = Visibility.Collapsed;
+                    ZnamkeSlikee.Visibility = Visibility.Collapsed;
+                    ZnamkeSlike.Visibility = Visibility.Hidden;
                 }
+                
 
-                SlikaMainGrid.Visibility = Visibility.Collapsed;
             }
-            else
+            catch (Exception ex)
             {
-                EnaSlikaGrid.Visibility = Visibility.Collapsed;
-                DveSlikeGrid.Visibility = Visibility.Collapsed;
-                SlikaMainGrid.Visibility = Visibility.Visible;
-                ZanimanjeText.Visibility = Visibility.Collapsed;
+                // log any unexpected error and continue — do not rethrow
+                ErrorLogger.LogException(ex, "ShowArtikelAsync");
             }
-
-
-            string[] ZnamkeKiImajoLogo =
-            {
-                "Arzopa.png",
-                "Baseus.png",
-                "Delock.png",
-                "Digitus.png",
-                "EZVIZ.png",
-                "FNIRSI.png",
-                "GMKtec.png",
-                "HiLook.png",
-                "Leviton.png",
-                "Logitech.png",
-                "Mikrotik.png",
-                "SBOX.png",
-                "Tenda.png",
-                "Triton.png",
-                "UBIQUITI.png"
-            };
-
-            if (ZnamkeKiImajoLogo.Contains($"{artikel.BlagovnaZnamka}.png"))
-            {
-                ZnamkeSlike.Source = new BitmapImage(new Uri($"/Logo/{artikel.BlagovnaZnamka}.png", UriKind.Relative));
-                ZnamkeSlikee.Source = new BitmapImage(new Uri($"/Logo/{artikel.BlagovnaZnamka}.png", UriKind.Relative));
-                CardZnamkeSlikee.Visibility = Visibility.Visible;
-                ZnamkeSlikee.Visibility = Visibility.Visible;
-                ZnamkeSlike.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                CardZnamkeSlikee.Visibility = Visibility.Collapsed;
-                ZnamkeSlikee.Visibility = Visibility.Collapsed;
-                ZnamkeSlike.Visibility = Visibility.Hidden;
-            }
-            
-
         }
 
 

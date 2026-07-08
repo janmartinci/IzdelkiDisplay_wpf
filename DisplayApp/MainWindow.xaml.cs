@@ -64,6 +64,9 @@ namespace DisplayApp
         /// Constructor
         public MainWindow()
         {
+            // Initialize global error logging as early as possible
+            ErrorLogger.Initialize();
+
             LoadData();
         }
 

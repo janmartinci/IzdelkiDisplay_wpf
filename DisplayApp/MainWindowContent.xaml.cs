@@ -126,6 +126,7 @@ namespace DisplayApp
                 FileCheckPasice();
             }
         }
+    
         private void JsonDataLoad()
         {
             var DatotekaPath = Directory.GetCurrentDirectory();
@@ -276,7 +277,6 @@ namespace DisplayApp
                                 Background = new SolidColorBrush(Color.FromRgb(11, 218, 194)),
                                 HorizontalAlignment = HorizontalAlignment.Center,
                             };
-
 
                             var wrapPanel = new WrapPanel();
 
@@ -597,7 +597,100 @@ namespace DisplayApp
 
         private void OglasOpen(object sender, RoutedEventArgs e, string filename)
         {
-            new OglasDisplay(filename).Show();
+            if (!File.Exists(filename))
+            {
+                MessageBox.Show($"Datoteka {filename} ne obstaja.");
+                return;
+            }
+
+            try
+            {
+                var jsonString = File.ReadAllText(filename);
+                List<IzdelekModel> deserializedList = JsonSerializer.Deserialize<List<IzdelekModel>>(jsonString);
+
+                if (deserializedList == null || deserializedList.Count == 0)
+                {
+                    MessageBox.Show("Datoteka ne vsebuje izdelkov.");
+                    return;
+                }
+
+                if (izdelek == null || izdelek.Count == 0)
+                {
+                    MessageBox.Show("Seznam izdelkov iz XML datoteke ni naložen. Uvozi ali ponovno naloži izdelke.");
+                    return;
+                }
+
+                // Collect XML IDs (match element name ignoring case)
+                var xmlIds = new HashSet<string>(
+                    izdelek
+                        .SelectMany(x => x.Elements()
+                            .Where(el => string.Equals(el.Name.LocalName, "IzdelekID", StringComparison.OrdinalIgnoreCase))
+                            .Select(el => el.Value?.Trim()))
+                        .Where(v => !string.IsNullOrEmpty(v)),
+                    StringComparer.OrdinalIgnoreCase);
+
+                var xmlNumbers = new HashSet<long>();
+                foreach (var s in xmlIds)
+                {
+                    if (long.TryParse(s, out var n)) xmlNumbers.Add(n);
+                }
+
+                var filtered = new List<IzdelekModel>();
+                var removed = new List<string>();
+
+                foreach (var item in deserializedList)
+                {
+                    var id = item.IzdelekID?.Trim();
+                    if (string.IsNullOrEmpty(id))
+                    {
+                        removed.Add("(prazna šifra)");
+                        continue;
+                    }
+
+                    var ok = false;
+                    if (long.TryParse(id, out var idNum) && xmlNumbers.Contains(idNum)) ok = true;
+                    if (!ok && xmlIds.Contains(id)) ok = true;
+
+                    if (ok) filtered.Add(item);
+                    else removed.Add(id);
+                }
+
+                // If any were removed, back up original and overwrite file with filtered list
+                if (filtered.Count != deserializedList.Count)
+                {
+
+                    var options = new JsonSerializerOptions { WriteIndented = true };
+                    var newJson = JsonSerializer.Serialize(filtered, options);
+                    File.WriteAllText(filename, newJson);
+
+                    // Refresh main window data so removed items / displays update
+                    var mainWindow = Window.GetWindow(this) as MainWindow;
+                    mainWindow?.RefreshData();
+                }
+
+                if (filtered.Count > 0)
+                {
+                    var oglas = new OglasDisplay(filename);
+                    oglas.Show();
+
+                    if (removed.Any())
+                    {
+                        MessageBox.Show($"Odstranjeni izdelki (niso najdeni v XML): {string.Join(", ", removed.Distinct())}");
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Po filtriranju ni ostalo nobenih izdelkov v datoteki. Datoteka je bila posodobljena.");
+                }
+            }
+            catch (JsonException)
+            {
+                MessageBox.Show("Prišlo je do napake pri branju JSON datoteke. Preveri obliko datoteke.");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Prišlo je do napake: {ex.Message}");
+            }
         }
 
         private void PromocijskoOknoOpen(object sender, RoutedEventArgs e, string fileName, string znamkePassWindow, List<string> pasiceFromFile, List<XElement> XmlLoadData, string DisplayXName)

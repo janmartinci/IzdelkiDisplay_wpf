@@ -63,5 +63,10 @@ namespace DisplayApp
         {
 
         }
+
+        private void CloseWindow(object sender, RoutedEventArgs e)
+        {
+            NavigationService.GetNavigationService(this)?.GoBack();
+        }
     }
 }

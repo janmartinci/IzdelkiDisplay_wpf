@@ -370,5 +370,10 @@ namespace DisplayApp
 
             }
         }
+
+        private void Nazaj_Gumb_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService.GoBack();
+        }
     }
 }
